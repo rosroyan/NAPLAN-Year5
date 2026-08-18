@@ -120,6 +120,18 @@
   .badge-slot .count{position:absolute; bottom:-6px; right:-6px; background:var(--ochre); color:#fff; font-size:10px; font-weight:800; border-radius:10px; padding:1px 5px; font-family:'Nunito';}
   .strand-note{color:#D8D3F5; font-size:12.5px; text-align:center; margin-top:auto; padding-top:14px; line-height:1.5;}
 
+  /* ---------- quest log ---------- */
+  .history-item{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    background:var(--paper); border:2px solid var(--sand-dark); border-radius:14px; padding:11px 14px; margin-bottom:8px;
+  }
+  .history-item .hi-left{display:flex; flex-direction:column; gap:2px;}
+  .history-item .hi-date{font-weight:800; font-size:13.5px; color:var(--night);}
+  .history-item .hi-time{font-size:11.5px; color:#6b6683; font-weight:700;}
+  .history-item .hi-right{text-align:right;}
+  .history-item .hi-score{font-family:'Baloo 2',cursive; font-size:15px; color:var(--ochre-dark); white-space:nowrap;}
+  .history-empty{color:#5a5578; font-weight:700; font-size:13.5px; text-align:center; padding:24px 8px;}
+
   /* ---------- quiz screen ---------- */
   .quiz-top{display:flex; align-items:center; gap:10px; margin-bottom:14px;}
   .quiz-progress-track{
@@ -224,7 +236,10 @@
   <section class="screen active" id="screen-home">
     <div class="topbar">
       <div class="brand"><span class="badge-icon">🦘</span><h1>Outback Numeracy Quest</h1></div>
-      <button class="icon-btn" id="btnInfo" title="How to install">ⓘ</button>
+      <div style="display:flex; gap:8px;">
+        <button class="icon-btn" id="btnStats" title="Quest log">📜</button>
+        <button class="icon-btn" id="btnInfo" title="How to install">ⓘ</button>
+      </div>
     </div>
 
     <div class="mascot-wrap" id="homeMascot"></div>
@@ -244,6 +259,28 @@
 
     <button class="btn btn-primary btn-block" id="btnStart">🚀 Start New Quest</button>
     <p class="strand-note">Covers Number &middot; Algebra &middot; Measurement &middot; Space &middot; Statistics — just like the real Year 5 NAPLAN Numeracy test.</p>
+  </section>
+
+  <!-- ===================== QUEST LOG ===================== -->
+  <section class="screen" id="screen-stats">
+    <div class="topbar">
+      <div class="brand"><h1 style="color:var(--paper)">📜 Quest Log</h1></div>
+      <button class="icon-btn" id="btnStatsClose">✕</button>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat-card"><div class="num" id="logTotalTests">0</div><div class="lbl">Tests Taken</div></div>
+      <div class="stat-card"><div class="num" id="logAvgPct">0%</div><div class="lbl">Average Score</div></div>
+      <div class="stat-card"><div class="num" id="logBestPct">0%</div><div class="lbl">Best Score</div></div>
+    </div>
+    <div class="stat-row">
+      <div class="stat-card" style="flex:1"><div class="num" id="logTotalTime">0m</div><div class="lbl">Total practice time</div></div>
+    </div>
+
+    <div class="badge-shelf" style="flex:1; overflow-y:auto;">
+      <h3>Test history</h3>
+      <div id="historyList"></div>
+    </div>
   </section>
 
   <!-- ===================== QUIZ ===================== -->
@@ -1166,14 +1203,30 @@ const STORE_KEY='naplan_quest_progress_v1';
 function loadProgress(){
   try{
     const raw=localStorage.getItem(STORE_KEY);
-    if(raw) return JSON.parse(raw);
+    if(raw){
+      const p=JSON.parse(raw);
+      if(!Array.isArray(p.history)) p.history=[];
+      return p;
+    }
   }catch(e){}
-  return {testsCompleted:0, bestScore:0, goldStreak:0, badges:{bronze:0,silver:0,gold:0,diamond:0}};
+  return {testsCompleted:0, bestScore:0, goldStreak:0, badges:{bronze:0,silver:0,gold:0,diamond:0}, history:[]};
 }
 function saveProgress(p){
   try{ localStorage.setItem(STORE_KEY, JSON.stringify(p)); }catch(e){}
 }
 let progress = loadProgress();
+
+function formatLogDate(ts){
+  return new Date(ts).toLocaleDateString('en-AU', {weekday:'short', day:'numeric', month:'short', year:'numeric'});
+}
+function formatLogClock(ts){
+  return new Date(ts).toLocaleTimeString('en-AU', {hour:'numeric', minute:'2-digit'});
+}
+function formatLogDuration(sec){
+  sec = Math.max(0, Math.round(sec));
+  const m = Math.floor(sec/60), s = sec%60;
+  return m>0 ? `${m}m ${s}s` : `${s}s`;
+}
 
 /* ============================================================
    APP STATE + NAV
@@ -1199,14 +1252,46 @@ function renderHome(){
   }).join('');
 }
 
+function renderStats(){
+  const hist = progress.history || [];
+  document.getElementById('logTotalTests').textContent = progress.testsCompleted;
+  const avg = hist.length ? Math.round(hist.reduce((a,r)=>a+r.pct,0)/hist.length) : 0;
+  document.getElementById('logAvgPct').textContent = avg+'%';
+  document.getElementById('logBestPct').textContent = progress.bestScore+'%';
+  const totalSec = hist.reduce((a,r)=>a+(r.durationSec||0),0);
+  const totalMin = Math.round(totalSec/60);
+  document.getElementById('logTotalTime').textContent = totalMin>=60 ? `${Math.floor(totalMin/60)}h ${totalMin%60}m` : `${totalMin}m`;
+
+  const list=document.getElementById('historyList');
+  if(!hist.length){
+    list.innerHTML = '<p class="history-empty">No quests completed yet — start your first quest to see it show up here!</p>';
+    return;
+  }
+  const medalIcons={bronze:'🥉',silver:'🥈',gold:'🥇',diamond:'💎',none:'🦘'};
+  list.innerHTML = hist.map(r=>`
+    <div class="history-item">
+      <div class="hi-left">
+        <span class="hi-date">${formatLogDate(r.ts)}</span>
+        <span class="hi-time">${formatLogClock(r.ts)} &middot; took ${formatLogDuration(r.durationSec)}</span>
+      </div>
+      <div class="hi-right">
+        <span class="hi-score">${medalIcons[r.medal]||'🦘'} ${r.score}/${r.total} &middot; ${r.pct}%</span>
+      </div>
+    </div>
+  `).join('');
+}
+
 on('btnStart','click', startQuiz);
 on('btnInfo','click', ()=>{ const m=document.getElementById('infoModal'); if(m) m.classList.add('active'); });
 on('btnCloseInfo','click', ()=>{ const m=document.getElementById('infoModal'); if(m) m.classList.remove('active'); });
+on('btnStats','click', ()=>{ renderStats(); showScreen('screen-stats'); });
+on('btnStatsClose','click', ()=>{ showScreen('screen-home'); renderHome(); });
 
 function startQuiz(){
   state.test = buildTest();
   state.idx = 0;
   state.answers = new Array(state.test.length).fill(null);
+  state.startedAt = Date.now();
   showScreen('screen-quiz');
   renderQuestion();
 }
@@ -1278,6 +1363,13 @@ function finishQuiz(){
 
   if(tier){ progress.badges[tier] = (progress.badges[tier]||0)+1; }
   if(pct>=80){ progress.goldStreak++; } else { progress.goldStreak=0; }
+
+  const finishedAt = Date.now();
+  const durationSec = Math.max(1, Math.round((finishedAt - (state.startedAt||finishedAt))/1000));
+  progress.history = progress.history || [];
+  progress.history.unshift({ ts: finishedAt, score, total, pct, durationSec, medal: tier || 'none', title });
+  if(progress.history.length > 300) progress.history.length = 300; // keep the log from growing forever
+
   saveProgress(progress);
 
   document.getElementById('scoreFrac').textContent = `${score}/${total}`;
