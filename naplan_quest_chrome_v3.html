@@ -1,0 +1,1783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>Outback Numeracy Quest</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Numeracy Quest">
+<meta name="theme-color" content="#241F47">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23241F47'/%3E%3Ctext x='50' y='68' font-size='58' text-anchor='middle'%3E%F0%9F%A6%98%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23241F47'/%3E%3Ctext x='50' y='68' font-size='58' text-anchor='middle'%3E%F0%9F%A6%98%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --night:#241F47;
+    --night2:#332B5E;
+    --sand:#F6EAD0;
+    --sand-dark:#E9D5A6;
+    --ochre:#B5541B;
+    --ochre-dark:#8E3F13;
+    --sun:#FFC53D;
+    --sun-dark:#E8A61E;
+    --green:#2F9E64;
+    --green-dark:#1F7A4A;
+    --red:#D93B3B;
+    --red-dark:#B22A2A;
+    --sky:#3E8FB0;
+    --ink:#241F47;
+    --paper:#FFFBF2;
+    --shadow: 0 10px 28px rgba(36,31,71,.28);
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    font-family:'Nunito',sans-serif;
+    background:
+      radial-gradient(circle at 15% 8%, #3a3270 0%, transparent 45%),
+      radial-gradient(circle at 85% 92%, #3a3270 0%, transparent 45%),
+      linear-gradient(180deg, var(--night) 0%, var(--night2) 100%);
+    color:var(--ink);
+    min-height:100%;
+    display:flex;
+    justify-content:center;
+    overscroll-behavior:none;
+    user-select:none;
+  }
+  #app{
+    width:100%;
+    max-width:520px;
+    min-height:100vh;
+    min-height:100dvh;
+    position:relative;
+    display:flex;
+    flex-direction:column;
+    padding: env(safe-area-inset-top,0) env(safe-area-inset-right,0) env(safe-area-inset-bottom,0) env(safe-area-inset-left,0);
+  }
+  h1,h2,h3{font-family:'Baloo 2', cursive; margin:0;}
+  .screen{display:none; flex-direction:column; flex:1; padding:18px 18px 26px; animation: fadeIn .35s ease; overflow-y:auto;}
+  .screen.active{display:flex;}
+  @keyframes fadeIn{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
+
+  /* ---------- top bar ---------- */
+  .topbar{display:flex; align-items:center; justify-content:space-between; padding:6px 2px 14px;}
+  .topbar .brand{display:flex; align-items:center; gap:8px; color:var(--paper);}
+  .brand .badge-icon{font-size:26px;}
+  .brand h1{font-size:19px; color:var(--paper); letter-spacing:.3px;}
+  .icon-btn{
+    width:40px; height:40px; border-radius:50%; border:none;
+    background:rgba(255,255,255,.12); color:var(--paper); font-size:18px;
+    display:flex; align-items:center; justify-content:center; cursor:pointer;
+  }
+  .icon-btn:active{transform:scale(.92);}
+
+  /* ---------- buttons ---------- */
+  .btn{
+    font-family:'Baloo 2',cursive;
+    font-size:19px;
+    border:none;
+    border-radius:20px;
+    padding:16px 20px;
+    cursor:pointer;
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    box-shadow: var(--shadow);
+    transition: transform .12s ease, box-shadow .12s ease;
+    min-height:56px;
+  }
+  .btn:active{transform: translateY(3px) scale(.98); box-shadow:0 4px 12px rgba(36,31,71,.25);}
+  .btn-primary{background:linear-gradient(180deg,var(--ochre) 0%, var(--ochre-dark) 100%); color:#fff;}
+  .btn-secondary{background:var(--paper); color:var(--night); border:2px solid var(--sand-dark);}
+  .btn-sun{background:linear-gradient(180deg,var(--sun) 0%, var(--sun-dark) 100%); color:var(--night);}
+  .btn-block{width:100%;}
+  .btn-ghost{background:transparent; color:var(--paper); box-shadow:none; font-size:16px; text-decoration:underline;}
+
+  /* ---------- home screen ---------- */
+  .mascot-wrap{display:flex; justify-content:center; margin:6px 0 6px;}
+  .mascot-wrap svg{width:150px; height:150px; filter:drop-shadow(0 10px 14px rgba(0,0,0,.3));}
+  .home-title{text-align:center; color:var(--paper); font-size:30px; line-height:1.15; margin:2px 0 4px;}
+  .home-title span{color:var(--sun);}
+  .home-sub{text-align:center; color:#D8D3F5; font-size:15px; margin-bottom:18px; font-weight:700;}
+  .stat-row{display:flex; gap:10px; margin-bottom:16px;}
+  .stat-card{
+    flex:1; background:rgba(255,255,255,.09); border:1px solid rgba(255,255,255,.15);
+    border-radius:16px; padding:12px 8px; text-align:center; color:var(--paper);
+  }
+  .stat-card .num{font-family:'Baloo 2',cursive; font-size:22px; color:var(--sun);}
+  .stat-card .lbl{font-size:11px; font-weight:700; opacity:.85; text-transform:uppercase; letter-spacing:.4px;}
+  .badge-shelf{
+    background:var(--paper); border-radius:22px; padding:16px; margin-bottom:16px; box-shadow:var(--shadow);
+  }
+  .badge-shelf h3{font-size:16px; margin-bottom:10px; color:var(--night);}
+  .badge-grid{display:grid; grid-template-columns:repeat(5,1fr); gap:8px;}
+  .badge-slot{
+    aspect-ratio:1; border-radius:14px; display:flex; align-items:center; justify-content:center;
+    font-size:24px; background:var(--sand); border:2px dashed var(--sand-dark); position:relative;
+  }
+  .badge-slot.earned{background:linear-gradient(160deg,#fff, var(--sand)); border:2px solid var(--sun-dark);}
+  .badge-slot .count{position:absolute; bottom:-6px; right:-6px; background:var(--ochre); color:#fff; font-size:10px; font-weight:800; border-radius:10px; padding:1px 5px; font-family:'Nunito';}
+  .strand-note{color:#D8D3F5; font-size:12.5px; text-align:center; margin-top:auto; padding-top:14px; line-height:1.5;}
+
+  /* ---------- quest log ---------- */
+  .history-item{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    background:var(--paper); border:2px solid var(--sand-dark); border-radius:14px; padding:11px 14px; margin-bottom:8px;
+  }
+  .history-item .hi-left{display:flex; flex-direction:column; gap:2px;}
+  .history-item .hi-date{font-weight:800; font-size:13.5px; color:var(--night);}
+  .history-item .hi-time{font-size:11.5px; color:#6b6683; font-weight:700;}
+  .history-item .hi-right{text-align:right;}
+  .history-item .hi-score{font-family:'Baloo 2',cursive; font-size:15px; color:var(--ochre-dark); white-space:nowrap;}
+  .history-item.clickable{cursor:pointer; border-color:var(--sun-dark);}
+  .history-item.clickable:active{transform:scale(.98);}
+  .history-item .hi-hint{font-size:11px; color:var(--ochre-dark); font-weight:800; margin-top:2px;}
+  .history-empty{color:#5a5578; font-weight:700; font-size:13.5px; text-align:center; padding:24px 8px;}
+
+  /* ---------- level select ---------- */
+  .level-select{margin-bottom:14px;}
+  .level-card{
+    display:flex; align-items:center; gap:12px; cursor:pointer;
+    background:var(--paper); border-radius:18px; padding:13px 16px; margin-bottom:10px; box-shadow:var(--shadow);
+    transition: transform .12s ease;
+  }
+  .level-card:active{transform:scale(.98);}
+  .level-card.locked{opacity:.5; cursor:default;}
+  .level-card.locked:active{transform:none;}
+  .level-badge{
+    width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-family:'Baloo 2',cursive; font-size:19px; color:#fff; flex-shrink:0;
+  }
+  .level-card[data-level="1"] .level-badge{background:linear-gradient(160deg,#3F9A6A,#1F7A4A);}
+  .level-card[data-level="2"] .level-badge{background:linear-gradient(160deg,#3E8FB0,#2A6A82);}
+  .level-card[data-level="3"] .level-badge{background:linear-gradient(160deg,#B5541B,#8E3F13);}
+  .level-info{flex:1; text-align:left; min-width:0;}
+  .level-title{font-family:'Baloo 2',cursive; font-size:16px; color:var(--night);}
+  .level-sub{font-size:11.5px; color:#6b6683; font-weight:700; line-height:1.3;}
+  .level-go{font-size:18px; color:var(--ochre); flex-shrink:0;}
+
+  /* ---------- coupons ---------- */
+  .coupon-card{
+    background:var(--paper); border:3px dashed var(--ochre); border-radius:18px; padding:18px; margin-bottom:14px; text-align:center;
+  }
+  .coupon-card .coupon-icon{font-size:34px; display:block; margin-bottom:6px;}
+  .coupon-card .coupon-code{
+    font-family:'Baloo 2',cursive; font-size:22px; letter-spacing:3px; color:var(--ochre-dark);
+    background:var(--sand); border-radius:10px; padding:8px 0; margin:10px 0;
+  }
+  .coupon-card .coupon-date{font-size:12px; color:#6b6683; font-weight:700;}
+  .coupon-card .coupon-msg{font-size:13px; color:var(--night); font-weight:800; margin-top:8px; line-height:1.4;}
+
+  /* ---------- quiz screen ---------- */
+  .quiz-top{display:flex; align-items:center; gap:10px; margin-bottom:14px;}
+  .quiz-progress-track{
+    flex:1; height:14px; background:rgba(255,255,255,.15); border-radius:10px; position:relative; overflow:visible;
+  }
+  .quiz-progress-fill{height:100%; background:linear-gradient(90deg,var(--sun),var(--ochre)); border-radius:10px; transition:width .35s ease;}
+  .quiz-roo{position:absolute; top:-19px; transition:left .35s ease; font-size:24px; transform:translateX(-50%);}
+  .quiz-count{color:var(--paper); font-family:'Baloo 2',cursive; font-size:15px; white-space:nowrap;}
+  .strand-chip{
+    display:inline-block; font-size:11.5px; font-weight:800; color:var(--night); background:var(--sun);
+    padding:4px 12px; border-radius:20px; margin-bottom:10px; text-transform:uppercase; letter-spacing:.4px; align-self:flex-start;
+  }
+  .qcard{
+    background:var(--paper); border-radius:26px; padding:22px 20px; box-shadow:var(--shadow); flex:0 0 auto;
+  }
+  .qprompt{font-size:19px; font-weight:800; color:var(--night); line-height:1.4; margin-bottom:14px;}
+  .qdiagram{display:flex; justify-content:center; margin:10px 0 16px;}
+  .qdiagram svg{max-width:100%; height:auto;}
+  .qdiagram table{border-collapse:collapse; font-size:14px; font-weight:700; color:var(--night);}
+  .qdiagram td, .qdiagram th{border:2px solid var(--sand-dark); padding:8px 14px; text-align:center;}
+  .qdiagram th{background:var(--sand);}
+  .choices{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:6px;}
+  .choice-btn{
+    font-family:'Nunito',sans-serif; font-weight:800; font-size:16px;
+    background:var(--sand); border:3px solid var(--sand-dark); border-radius:16px;
+    padding:14px 8px; text-align:center; cursor:pointer; color:var(--night); min-height:58px;
+    display:flex; align-items:center; justify-content:center; line-height:1.25;
+    transition: all .12s ease;
+  }
+  .choice-btn:active{transform:scale(.96);}
+  .choice-btn.selected{border-color:var(--ochre); background:#FBE3CE; box-shadow:0 0 0 3px rgba(181,84,27,.25);}
+  .quiz-actions{display:flex; gap:12px; margin-top:18px;}
+  .quiz-actions .btn{flex:1;}
+
+  /* ---------- results screen ---------- */
+  .results-hero{text-align:center; padding:14px 0 6px;}
+  .score-ring{
+    width:170px; height:170px; margin:6px auto 10px; position:relative; display:flex; align-items:center; justify-content:center;
+  }
+  .score-ring svg{width:100%; height:100%; transform:rotate(-90deg);}
+  .score-ring .pct{position:absolute; font-family:'Baloo 2',cursive; font-size:38px; color:var(--paper);}
+  .score-ring .pct span{font-size:16px; display:block; color:#D8D3F5; font-family:'Nunito'; font-weight:800;}
+  .stars-row{display:flex; justify-content:center; gap:6px; margin:8px 0 2px;}
+  .stars-row .star{font-size:30px; opacity:.25; transform:scale(.6); transition:all .3s ease;}
+  .stars-row .star.lit{opacity:1; transform:scale(1);}
+  .badge-reveal{
+    background:var(--paper); border-radius:26px; padding:22px 18px; text-align:center; margin:16px 0; box-shadow:var(--shadow);
+  }
+  .badge-reveal .medal{font-size:64px; display:block; margin-bottom:8px; animation:pop .5s cubic-bezier(.34,1.56,.64,1);}
+  @keyframes pop{ 0%{transform:scale(0) rotate(-20deg);} 70%{transform:scale(1.15) rotate(4deg);} 100%{transform:scale(1) rotate(0);} }
+  .badge-reveal h2{font-size:22px; color:var(--night); margin-bottom:6px;}
+  .badge-reveal p{margin:0; color:#5a5578; font-weight:700; font-size:14.5px;}
+  .results-actions{display:flex; flex-direction:column; gap:12px; margin-top:auto; padding-top:16px;}
+
+  /* ---------- review screen ---------- */
+  .review-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;}
+  .review-head h2{color:var(--paper); font-size:20px;}
+  .review-nav{display:flex; align-items:center; gap:10px; color:var(--paper); font-family:'Baloo 2',cursive; font-size:15px;}
+  .review-card{background:var(--paper); border-radius:24px; padding:20px; box-shadow:var(--shadow); flex:1; display:flex; flex-direction:column;}
+  .review-result-flag{
+    display:inline-flex; align-items:center; gap:6px; font-weight:800; font-size:13px; padding:5px 12px; border-radius:20px; margin-bottom:10px; align-self:flex-start;
+  }
+  .review-result-flag.correct{background:#DCF3E6; color:var(--green-dark);}
+  .review-result-flag.wrong{background:#FBE1E1; color:var(--red-dark);}
+  .review-choices{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:14px 0;}
+  .rc{
+    border-radius:14px; padding:12px 8px; text-align:center; font-weight:800; font-size:15px; border:3px solid var(--sand-dark);
+    background:var(--sand); position:relative; color:var(--night);
+  }
+  .rc.correct-ans{background:#DCF3E6; border-color:var(--green);}
+  .rc.user-wrong{background:#FBE1E1; border-color:var(--red);}
+  .rc .tag{position:absolute; top:-10px; right:-6px; font-size:16px;}
+  .explain-box{
+    background:var(--sand); border-radius:14px; padding:12px 14px; font-size:14px; font-weight:700; color:var(--night); line-height:1.5;
+    margin-top:auto;
+  }
+  .explain-box b{color:var(--ochre-dark);}
+  .review-footer{display:flex; gap:10px; margin-top:14px;}
+  .review-footer .btn{flex:1; font-size:16px; padding:12px;}
+
+  /* ---------- modal ---------- */
+  .modal-backdrop{
+    position:fixed; inset:0; background:rgba(20,16,45,.6); display:none; align-items:center; justify-content:center; z-index:50; padding:20px;
+  }
+  .modal-backdrop.active{display:flex;}
+  .modal{background:var(--paper); border-radius:22px; padding:22px; max-width:420px; width:100%; max-height:80vh; overflow:auto;}
+  .modal h3{color:var(--night); margin-bottom:10px; font-size:20px;}
+  .modal p, .modal li{color:#4a4568; font-size:14.5px; line-height:1.55; font-weight:600;}
+  .modal ol{padding-left:20px;}
+  .modal .btn{margin-top:14px;}
+
+  /* confetti */
+  .confetti-piece{position:fixed; top:-10px; width:9px; height:14px; z-index:60; pointer-events:none; border-radius:2px;}
+
+  ::-webkit-scrollbar{width:0; background:transparent;}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ===================== HOME ===================== -->
+  <section class="screen active" id="screen-home">
+    <div class="topbar">
+      <div class="brand"><span class="badge-icon">🦘</span><h1>Outback Numeracy Quest</h1></div>
+      <div style="display:flex; gap:8px;">
+        <button class="icon-btn" id="btnStats" title="Quest log">📜</button>
+        <button class="icon-btn" id="btnInfo" title="How to install">ⓘ</button>
+      </div>
+    </div>
+
+    <div class="mascot-wrap" id="homeMascot"></div>
+    <h2 class="home-title">G'day, Kiara!<br>Ready for a <span>Year 5</span> Maths Quest?</h2>
+    <p class="home-sub">NAPLAN-style numeracy questions &middot; new every time</p>
+
+    <div class="stat-row">
+      <div class="stat-card"><div class="num" id="statTests">0</div><div class="lbl">Quests Done</div></div>
+      <div class="stat-card"><div class="num" id="statBest">0%</div><div class="lbl">Best Score</div></div>
+      <div class="stat-card"><div class="num" id="statStreak">0</div><div class="lbl">Gold+ Streak</div></div>
+    </div>
+
+    <div class="badge-shelf">
+      <h3>🏅 Medal Shelf</h3>
+      <div class="badge-grid" id="badgeGrid"></div>
+    </div>
+
+    <button class="btn btn-sun btn-block" id="btnCoupons" style="margin-bottom:16px;">🎁 My Reward Coupons <span id="couponCountChip"></span></button>
+
+    <div class="level-select" id="levelSelect">
+      <h3 style="color:var(--paper); font-size:15px; margin:0 0 10px;">Choose your level</h3>
+      <div class="level-card" data-level="1">
+        <div class="level-badge">1</div>
+        <div class="level-info">
+          <div class="level-title">Basic</div>
+          <div class="level-sub" data-sub="1">Warm-up numbers &middot; always open</div>
+        </div>
+        <div class="level-action"><span class="level-go">▶</span></div>
+      </div>
+      <div class="level-card" data-level="2">
+        <div class="level-badge">2</div>
+        <div class="level-info">
+          <div class="level-title">Advanced</div>
+          <div class="level-sub" data-sub="2"></div>
+        </div>
+        <div class="level-action"><span class="level-go">▶</span></div>
+      </div>
+      <div class="level-card" data-level="3">
+        <div class="level-badge">3</div>
+        <div class="level-info">
+          <div class="level-title">Extension</div>
+          <div class="level-sub" data-sub="3"></div>
+        </div>
+        <div class="level-action"><span class="level-go">▶</span></div>
+      </div>
+    </div>
+
+    <p class="strand-note">Covers Number &middot; Algebra &middot; Measurement &middot; Space &middot; Statistics — just like the real Year 5 NAPLAN Numeracy test.</p>
+  </section>
+
+  <!-- ===================== QUEST LOG ===================== -->
+  <section class="screen" id="screen-stats">
+    <div class="topbar">
+      <div class="brand"><h1 style="color:var(--paper)">📜 Quest Log</h1></div>
+      <button class="icon-btn" id="btnStatsClose">✕</button>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat-card"><div class="num" id="logTotalTests">0</div><div class="lbl">Tests Taken</div></div>
+      <div class="stat-card"><div class="num" id="logAvgPct">0%</div><div class="lbl">Average Score</div></div>
+      <div class="stat-card"><div class="num" id="logBestPct">0%</div><div class="lbl">Best Score</div></div>
+    </div>
+    <div class="stat-row">
+      <div class="stat-card" style="flex:1"><div class="num" id="logTotalTime">0m</div><div class="lbl">Total practice time</div></div>
+    </div>
+
+    <div class="badge-shelf" style="flex:1; overflow-y:auto;">
+      <h3>Test history</h3>
+      <p style="font-size:12px; color:#6b6683; font-weight:700; margin:-4px 0 10px;">Your last 5 quizzes can be reopened to review every question.</p>
+      <div id="historyList"></div>
+    </div>
+  </section>
+
+  <!-- ===================== COUPONS ===================== -->
+  <section class="screen" id="screen-coupons">
+    <div class="topbar">
+      <div class="brand"><h1 style="color:var(--paper)">🎁 Reward Coupons</h1></div>
+      <button class="icon-btn" id="btnCouponsClose">✕</button>
+    </div>
+    <div id="couponIntro" class="badge-reveal" style="margin-bottom:16px;">
+      <span class="medal">🎯</span>
+      <h2>Score 5 Gold+ in a row at Level 3</h2>
+      <p>Extension level, five quests in a row scoring 80% or higher, unlocks a Reward Coupon to show your parent!</p>
+    </div>
+    <div style="flex:1; overflow-y:auto;" id="couponListWrap">
+      <div id="couponList"></div>
+    </div>
+  </section>
+
+  <!-- ===================== QUIZ ===================== -->
+  <section class="screen" id="screen-quiz">
+    <div class="quiz-top">
+      <div class="quiz-progress-track">
+        <div class="quiz-progress-fill" id="quizFill"></div>
+        <div class="quiz-roo" id="quizRoo">🦘</div>
+      </div>
+      <div class="quiz-count" id="quizCount">1/40</div>
+    </div>
+    <div class="strand-chip" id="strandChip">Number</div>
+    <div class="qcard">
+      <div class="qprompt" id="qPrompt"></div>
+      <div class="qdiagram" id="qDiagram"></div>
+      <div class="choices" id="qChoices"></div>
+    </div>
+    <div class="quiz-actions">
+      <button class="btn btn-secondary" id="btnQuit">Quit</button>
+      <button class="btn btn-primary" id="btnNext" disabled>Next ➜</button>
+    </div>
+  </section>
+
+  <!-- ===================== RESULTS ===================== -->
+  <section class="screen" id="screen-results">
+    <div class="topbar"><div class="brand"><h1 style="color:var(--paper)" id="resultsTitle">Quest Complete!</h1></div></div>
+    <div class="results-hero">
+      <div class="score-ring">
+        <svg viewBox="0 0 120 120">
+          <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="12"/>
+          <circle cx="60" cy="60" r="52" fill="none" stroke="url(#gradRing)" stroke-width="12" stroke-linecap="round" id="ringProgress" stroke-dasharray="327" stroke-dashoffset="327"/>
+          <defs><linearGradient id="gradRing" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#FFC53D"/><stop offset="100%" stop-color="#B5541B"/></linearGradient></defs>
+        </svg>
+        <div class="pct" id="scorePct">0%<span id="scoreFrac">0/15</span></div>
+      </div>
+      <div class="stars-row" id="starsRow">
+        <span class="star">⭐</span><span class="star">⭐</span><span class="star">⭐</span><span class="star">⭐</span><span class="star">⭐</span>
+      </div>
+    </div>
+    <div class="badge-reveal">
+      <span class="medal" id="medalIcon">🥉</span>
+      <h2 id="medalTitle">Bronze Boomerang</h2>
+      <p id="medalMsg">Nice work, explorer!</p>
+    </div>
+    <div class="results-actions">
+      <button class="btn btn-sun btn-block" id="btnNewCoupon" style="display:none; background:linear-gradient(180deg,#FFC53D,#B5541B); color:#fff;">🎁 View Your New Reward Coupon!</button>
+      <button class="btn btn-sun btn-block" id="btnReview">🔍 Review My Answers</button>
+      <button class="btn btn-primary btn-block" id="btnRetry">🔁 New Quest (Fresh Questions)</button>
+      <button class="btn btn-ghost" id="btnHome">Back to Camp</button>
+    </div>
+  </section>
+
+  <!-- ===================== REVIEW ===================== -->
+  <section class="screen" id="screen-review">
+    <div class="review-head">
+      <h2>Review</h2>
+      <div class="review-nav">
+        <button class="icon-btn" id="btnPrevQ">◀</button>
+        <span id="reviewCount">1/40</span>
+        <button class="icon-btn" id="btnNextQ">▶</button>
+      </div>
+    </div>
+    <div class="review-card">
+      <span class="review-result-flag" id="reviewFlag">✅ Correct</span>
+      <div class="qprompt" id="rvPrompt"></div>
+      <div class="qdiagram" id="rvDiagram"></div>
+      <div class="review-choices" id="rvChoices"></div>
+      <div class="explain-box" id="rvExplain"></div>
+    </div>
+    <div class="review-footer">
+      <button class="btn btn-secondary" id="btnBackResults">Back</button>
+      <button class="btn btn-primary" id="btnReviewHome">Camp</button>
+    </div>
+  </section>
+
+</div>
+
+<!-- info modal -->
+<div class="modal-backdrop" id="infoModal">
+  <div class="modal">
+    <h3>📲 Add to your Home Screen</h3>
+    <p><b>On iPad (any browser):</b></p>
+    <ol>
+      <li>Tap the <b>Share</b> icon (square with an arrow) in the toolbar.</li>
+      <li>Scroll down and tap <b>"Add to Home Screen."</b></li>
+      <li>Tap <b>Add</b>. A "Numeracy Quest" icon appears like any app — full screen, no browser bars.</li>
+    </ol>
+    <p><b>On Mac (Chrome):</b></p>
+    <ol>
+      <li>Open this page in Chrome.</li>
+      <li>Click the <b>⋮ menu</b> (top right) ▸ <b>Save and Share</b> ▸ <b>Create Shortcut...</b></li>
+      <li>Tick <b>"Open as window"</b>, then click <b>Create</b>. An icon appears in Launchpad/Applications and opens as its own app window, no browser bars.</li>
+    </ol>
+    <p><b>On Mac (Safari 17+):</b></p>
+    <ol>
+      <li>Open this page in Safari.</li>
+      <li>Click <b>File ▸ Add to Dock</b> (or the Share icon ▸ Add to Dock).</li>
+      <li>It now opens as its own app window from the Dock.</li>
+    </ol>
+    <p>Everything runs locally in the browser — no internet needed after the first load, and your medals are saved on this device.</p>
+    <button class="btn btn-primary btn-block" id="btnCloseInfo">Got it!</button>
+  </div>
+</div>
+
+<script>
+function boot(){
+"use strict";
+
+/* ============================================================
+   UTILITIES
+   ============================================================ */
+function on(id,evt,fn){
+  const el = document.getElementById(id);
+  if(el) el.addEventListener(evt, fn);
+  else console.warn('Numeracy Quest: missing element #'+id+' — that control will not respond.');
+}
+function ri(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
+function pick(arr){ return arr[ri(0,arr.length-1)]; }
+function shuffle(arr){ const a=arr.slice(); for(let i=a.length-1;i>0;i--){ const j=ri(0,i); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function fmtMoney(v){ return '$'+v.toFixed(2); }
+function pad2(n){ return n.toString().padStart(2,'0'); }
+function formatTime(h,m){ let hh=h%12; if(hh===0) hh=12; return hh+':'+pad2(m); }
+function formatDuration(mins){
+  if(mins<60) return mins+' min';
+  const h=Math.floor(mins/60), m=mins%60;
+  return m===0 ? (h+' h') : (h+' h '+m+' min');
+}
+function choicesFromCorrect(correct, deltas, formatter){
+  formatter = formatter || (v=>String(v));
+  const set = new Set([correct]);
+  const pool = shuffle(deltas);
+  for(const d of pool){
+    if(set.size>=4) break;
+    const val = correct + d;
+    if(val < 0) continue;
+    if(!set.has(val)) set.add(val);
+  }
+  let filler = 1;
+  while(set.size < 4){
+    const val = correct + filler*11 + 3;
+    if(val>=0 && !set.has(val)) set.add(val);
+    filler++;
+  }
+  const arr = shuffle([...set]);
+  return { choices: arr.map(formatter), correctIndex: arr.indexOf(correct) };
+}
+function choicesFromStrings(correctStr, wrongArr){
+  const set = new Set([correctStr]);
+  for(const w of wrongArr){ if(set.size>=4) break; if(!set.has(w)) set.add(w); }
+  const arr = shuffle([...set]);
+  return { choices: arr, correctIndex: arr.indexOf(correctStr) };
+}
+
+/* ============================================================
+   SVG DIAGRAM HELPERS
+   ============================================================ */
+function svgWrap(inner,w,h){
+  return `<svg viewBox="0 0 ${w} ${h}" width="100%" style="max-width:${Math.min(w,300)}px" xmlns="http://www.w3.org/2000/svg">${inner}</svg>`;
+}
+function svgNumberLine(min,max,step,markValue,label){
+  const w=300,h=110,x0=24,x1=276,y=60,range=max-min;
+  let ticks='';
+  for(let v=min; v<=max; v+=step){
+    const x = x0 + ((v-min)/range)*(x1-x0);
+    ticks += `<line x1="${x}" y1="${y-6}" x2="${x}" y2="${y+6}" stroke="#241F47" stroke-width="2"/>`;
+    ticks += `<text x="${x}" y="${y+24}" font-size="11" text-anchor="middle" fill="#241F47" font-family="Nunito">${v}</text>`;
+  }
+  const mx = x0 + ((markValue-min)/range)*(x1-x0);
+  const arrow = `<polygon points="${mx-7},${y-22} ${mx+7},${y-22} ${mx},${y-8}" fill="#B5541B"/>`;
+  const lbl = label ? `<text x="${mx}" y="${y-28}" font-size="12" font-weight="700" text-anchor="middle" fill="#B5541B" font-family="Nunito">${label}</text>` : '';
+  return svgWrap(`<line x1="${x0}" y1="${y}" x2="${x1}" y2="${y}" stroke="#241F47" stroke-width="3"/>${ticks}${arrow}${lbl}`,w,h);
+}
+function svgClock(hour,minute){
+  const cx=100,cy=100,r=82;
+  const hourAngle = ((hour%12)+minute/60)/12*360 - 90;
+  const minAngle = (minute/60)*360 - 90;
+  function pt(angDeg,len){ const rad=angDeg*Math.PI/180; return [cx+len*Math.cos(rad), cy+len*Math.sin(rad)]; }
+  const [hx,hy]=pt(hourAngle,44), [mx,my]=pt(minAngle,66);
+  let nums='';
+  for(let n=1;n<=12;n++){
+    const ang=n/12*360-90; const [nx,ny]=pt(ang,66);
+    nums += `<text x="${nx}" y="${ny+5}" font-size="13" font-weight="700" text-anchor="middle" fill="#241F47" font-family="Nunito">${n}</text>`;
+  }
+  let ticks='';
+  for(let n=0;n<60;n+=5){ const ang=n/60*360-90; const [tx1,ty1]=pt(ang,78); const [tx2,ty2]=pt(ang,74); ticks+=`<line x1="${tx1}" y1="${ty1}" x2="${tx2}" y2="${ty2}" stroke="#241F47" stroke-width="2"/>`; }
+  return svgWrap(`
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="#F6EAD0" stroke="#241F47" stroke-width="4"/>
+    ${ticks}${nums}
+    <line x1="${cx}" y1="${cy}" x2="${hx}" y2="${hy}" stroke="#241F47" stroke-width="6" stroke-linecap="round"/>
+    <line x1="${cx}" y1="${cy}" x2="${mx}" y2="${my}" stroke="#B5541B" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="${cx}" cy="${cy}" r="5" fill="#241F47"/>
+  `,200,200);
+}
+function svgBarChart(categories,values){
+  const w=300,h=230,padL=34,padB=44,padT=16;
+  const niceMax = Math.max(5, Math.ceil(Math.max(...values)/5)*5);
+  const chartW=w-padL-16, chartH=h-padB-padT;
+  const gap=chartW/categories.length, barW=gap*0.58;
+  let grid='',bars='',labels='';
+  for(let i=0;i<=5;i++){
+    const val=niceMax/5*i, y=padT+chartH-(val/niceMax)*chartH;
+    grid += `<line x1="${padL}" y1="${y}" x2="${w-16}" y2="${y}" stroke="#E9D5A6" stroke-width="1"/><text x="${padL-6}" y="${y+4}" font-size="10" text-anchor="end" fill="#241F47" font-family="Nunito">${val}</text>`;
+  }
+  categories.forEach((cat,i)=>{
+    const val=values[i], barH=(val/niceMax)*chartH;
+    const x=padL+i*gap+(gap-barW)/2, y=padT+chartH-barH;
+    bars += `<rect x="${x}" y="${y}" width="${barW}" height="${barH}" fill="#B5541B" rx="4"/>`;
+    labels += `<text x="${x+barW/2}" y="${h-padB+18}" font-size="11" font-weight="700" text-anchor="middle" fill="#241F47" font-family="Nunito">${cat}</text>`;
+  });
+  return svgWrap(`${grid}${bars}${labels}<line x1="${padL}" y1="${padT+chartH}" x2="${w-16}" y2="${padT+chartH}" stroke="#241F47" stroke-width="2"/>`,w,h);
+}
+function svgGridShape(cols,rows,filled,cell){
+  cell = cell || 26;
+  const w=cols*cell+20, h=rows*cell+20;
+  let lines='';
+  for(let c=0;c<=cols;c++) lines+=`<line x1="${10+c*cell}" y1="10" x2="${10+c*cell}" y2="${10+rows*cell}" stroke="#E9D5A6" stroke-width="1"/>`;
+  for(let r=0;r<=rows;r++) lines+=`<line x1="10" y1="${10+r*cell}" x2="${10+cols*cell}" y2="${10+r*cell}" stroke="#E9D5A6" stroke-width="1"/>`;
+  let fills='';
+  filled.forEach(([c,r])=>{ fills+=`<rect x="${10+c*cell}" y="${10+r*cell}" width="${cell}" height="${cell}" fill="#FFC53D" stroke="#241F47" stroke-width="1.5"/>`; });
+  return svgWrap(`${fills}${lines}`,w,h);
+}
+function svgLabeledRect(wu,hu){
+  const scale = Math.min(12, 200/wu, 130/hu);
+  const rw=wu*scale, rh=hu*scale, x0=30, y0=30;
+  return svgWrap(`
+    <rect x="${x0}" y="${y0}" width="${rw}" height="${rh}" fill="#F6EAD0" stroke="#241F47" stroke-width="3"/>
+    <text x="${x0+rw/2}" y="${y0-10}" font-size="14" font-weight="800" text-anchor="middle" fill="#B5541B" font-family="Nunito">${wu} units</text>
+    <text x="${x0-14}" y="${y0+rh/2}" font-size="14" font-weight="800" text-anchor="middle" fill="#B5541B" font-family="Nunito" transform="rotate(-90 ${x0-14} ${y0+rh/2})">${hu} units</text>
+  `, x0+rw+40, y0+rh+30);
+}
+function svgAngle(deg){
+  const cx=40,cy=170,r=140;
+  const rad=deg*Math.PI/180;
+  const x2=cx+r, y2=cy;
+  const x3=cx+r*Math.cos(rad), y3=cy-r*Math.sin(rad);
+  const arcR=42, largeFlag = deg>180?1:0;
+  const ax=cx+arcR, ay=cy;
+  const bx=cx+arcR*Math.cos(rad), by=cy-arcR*Math.sin(rad);
+  return svgWrap(`
+    <line x1="${cx}" y1="${cy}" x2="${x2}" y2="${y2}" stroke="#241F47" stroke-width="3"/>
+    <line x1="${cx}" y1="${cy}" x2="${x3}" y2="${y3}" stroke="#241F47" stroke-width="3"/>
+    <path d="M ${ax} ${ay} A ${arcR} ${arcR} 0 ${largeFlag} 0 ${bx} ${by}" fill="none" stroke="#B5541B" stroke-width="3"/>
+    <circle cx="${cx}" cy="${cy}" r="4" fill="#241F47"/>
+  `,300,200);
+}
+function svgPolygonShape(sides,irregular){
+  const cx=100,cy=100,r=78; let pts=[];
+  if(irregular==='rect'){
+    pts=[[cx-90,cy-50],[cx+90,cy-50],[cx+90,cy+50],[cx-90,cy+50]];
+  } else if(irregular==='trap'){
+    pts=[[cx-90,cy+50],[cx-40,cy-50],[cx+40,cy-50],[cx+90,cy+50]];
+  } else {
+    for(let i=0;i<sides;i++){
+      const ang = -90 + i*(360/sides);
+      const rad = ang*Math.PI/180;
+      pts.push([cx+r*Math.cos(rad), cy+r*Math.sin(rad)]);
+    }
+  }
+  const ptsStr = pts.map(p=>p.join(',')).join(' ');
+  return svgWrap(`<polygon points="${ptsStr}" fill="#FFC53D" stroke="#B5541B" stroke-width="4" stroke-linejoin="round"/>`,200,200);
+}
+function svgCoordGrid(px,py,size){
+  const cell=40, pad=30, w=size*cell+pad+10, h=size*cell+pad+10;
+  const cols='ABCDEFGH'.slice(0,size);
+  let lines='', labels='';
+  for(let c=0;c<=size;c++) lines+=`<line x1="${pad+c*cell}" y1="10" x2="${pad+c*cell}" y2="${10+size*cell}" stroke="#E9D5A6" stroke-width="1"/>`;
+  for(let r=0;r<=size;r++) lines+=`<line x1="${pad}" y1="${10+r*cell}" x2="${pad+size*cell}" y2="${10+r*cell}" stroke="#E9D5A6" stroke-width="1"/>`;
+  for(let c=0;c<size;c++) labels+=`<text x="${pad+c*cell+cell/2}" y="${20+size*cell}" font-size="13" font-weight="800" text-anchor="middle" fill="#241F47" font-family="Nunito">${cols[c]}</text>`;
+  for(let r=0;r<size;r++) labels+=`<text x="${pad-14}" y="${10+r*cell+cell/2+5}" font-size="13" font-weight="800" text-anchor="middle" fill="#241F47" font-family="Nunito">${size-r}</text>`;
+  const dotX = pad+px*cell+cell/2;
+  const dotY = 10+(size-1-py)*cell+cell/2;
+  const dot = `<circle cx="${dotX}" cy="${dotY}" r="8" fill="#B5541B" stroke="#fff" stroke-width="2"/>`;
+  return svgWrap(`${lines}${labels}${dot}`,w,h+16);
+}
+function svgCubeNet(){
+  const s=34, x0=50, y0=10;
+  const squares=[[1,0],[0,1],[1,1],[2,1],[3,1],[1,2]];
+  let rects='';
+  squares.forEach(([c,r])=>{ rects+=`<rect x="${x0+c*s}" y="${y0+r*s}" width="${s}" height="${s}" fill="#F6EAD0" stroke="#241F47" stroke-width="2.5"/>`; });
+  return svgWrap(rects, x0+4*s+50, y0+3*s+20);
+}
+function svgTriPrismNet(){
+  const s=34, x0=20, y0=40;
+  let shapes = `<rect x="${x0+s}" y="${y0}" width="${s*2.4}" height="${s}" fill="#F6EAD0" stroke="#241F47" stroke-width="2.5"/>`;
+  shapes += `<polygon points="${x0+s},${y0} ${x0},${y0+s/2} ${x0+s},${y0+s}" fill="#E9D5A6" stroke="#241F47" stroke-width="2.5"/>`;
+  shapes += `<polygon points="${x0+s*3.4},${y0} ${x0+s*4.4},${y0+s/2} ${x0+s*3.4},${y0+s}" fill="#E9D5A6" stroke="#241F47" stroke-width="2.5"/>`;
+  return svgWrap(shapes, x0+s*4.4+30, y0+s+30);
+}
+function svgPyramidNet(){
+  const cx=110,cy=95,s=60;
+  let shapes = `<rect x="${cx-s/2}" y="${cy-s/2}" width="${s}" height="${s}" fill="#F6EAD0" stroke="#241F47" stroke-width="2.5"/>`;
+  const tris = [
+    [[cx-s/2,cy-s/2],[cx+s/2,cy-s/2],[cx,cy-s/2-40]],
+    [[cx-s/2,cy+s/2],[cx+s/2,cy+s/2],[cx,cy+s/2+40]],
+    [[cx-s/2,cy-s/2],[cx-s/2,cy+s/2],[cx-s/2-40,cy]],
+    [[cx+s/2,cy-s/2],[cx+s/2,cy+s/2],[cx+s/2+40,cy]]
+  ];
+  tris.forEach(t=>{ shapes+=`<polygon points="${t.map(p=>p.join(',')).join(' ')}" fill="#E9D5A6" stroke="#241F47" stroke-width="2.5"/>`; });
+  return svgWrap(shapes, 220, 190);
+}
+function svgThermometer(val,min,max){
+  const x=90,yTop=20,yBot=180,tubeW=18,bulbR=22;
+  const frac=(val-min)/(max-min);
+  const fillTop = yBot - frac*(yBot-yTop-bulbR);
+  return svgWrap(`
+    <rect x="${x-tubeW/2}" y="${yTop}" width="${tubeW}" height="${yBot-yTop}" rx="9" fill="#fff" stroke="#241F47" stroke-width="3"/>
+    <rect x="${x-tubeW/2+3}" y="${fillTop}" width="${tubeW-6}" height="${yBot-fillTop}" rx="6" fill="#D93B3B"/>
+    <circle cx="${x}" cy="${yBot+bulbR-14}" r="${bulbR}" fill="#D93B3B" stroke="#241F47" stroke-width="3"/>
+    <text x="${x+38}" y="${yTop+10}" font-size="12" fill="#241F47" font-family="Nunito">${max}°C</text>
+    <text x="${x+38}" y="${yBot-14}" font-size="12" fill="#241F47" font-family="Nunito">${min}°C</text>
+  `,180,220);
+}
+function svgShape3D(type){
+  const shapes={
+    cube: `<polygon points="70,50 140,50 165,25 95,25" fill="#F6EAD0" stroke="#241F47" stroke-width="2.5"/>
+           <polygon points="140,50 165,25 165,95 140,120" fill="#E9D5A6" stroke="#241F47" stroke-width="2.5"/>
+           <polygon points="70,50 140,50 140,120 70,120" fill="#FFC53D" stroke="#241F47" stroke-width="2.5"/>`,
+    'triangular prism': `<polygon points="100,20 60,110 140,110" fill="#FFC53D" stroke="#241F47" stroke-width="2.5"/>
+           <polygon points="100,20 165,50 145,140 60,110" fill="#E9D5A6" stroke="#241F47" stroke-width="2.5" fill-opacity=".9"/>
+           <polygon points="140,110 165,50 145,140" fill="#F6EAD0" stroke="#241F47" stroke-width="2.5"/>`,
+    'square pyramid': `<polygon points="100,20 40,130 165,130" fill="#FFC53D" stroke="#241F47" stroke-width="2.5"/>
+           <polygon points="100,20 165,130 190,110 120,10" fill="#E9D5A6" stroke="#241F47" stroke-width="2" fill-opacity=".85"/>
+           <line x1="100" y1="20" x2="120" y2="10" stroke="#241F47" stroke-width="2" stroke-dasharray="3,3"/>`,
+    'rectangular prism': `<polygon points="55,55 145,55 175,25 85,25" fill="#F6EAD0" stroke="#241F47" stroke-width="2.5"/>
+           <polygon points="145,55 175,25 175,80 145,110" fill="#E9D5A6" stroke="#241F47" stroke-width="2.5"/>
+           <polygon points="55,55 145,55 145,110 55,110" fill="#FFC53D" stroke="#241F47" stroke-width="2.5"/>`
+  };
+  return svgWrap(shapes[type], 200, 160);
+}
+function svgPictograph(categories,counts,iconVal){
+  const rowH=40, x0=90, w=290, h=20+categories.length*rowH+30;
+  let rows='';
+  categories.forEach((cat,i)=>{
+    const y=26+i*rowH;
+    rows += `<text x="${x0-10}" y="${y+15}" font-size="12" font-weight="700" text-anchor="end" fill="#241F47" font-family="Nunito">${cat}</text>`;
+    const n = Math.round(counts[i]/iconVal);
+    for(let k=0;k<n;k++){
+      rows += `<circle cx="${x0+18+k*24}" cy="${y+10}" r="9" fill="#B5541B"/>`;
+    }
+  });
+  rows += `<text x="${x0}" y="${h-8}" font-size="11" font-style="italic" fill="#241F47" font-family="Nunito">🔴 = ${iconVal}</text>`;
+  return svgWrap(rows,w,h);
+}
+function svgGrowingPattern(counts){
+  const w=300,h=140,groupW=w/counts.length;
+  let content='';
+  counts.forEach((n,i)=>{
+    const cx=groupW*i+groupW/2, cols=Math.ceil(Math.sqrt(n));
+    for(let k=0;k<n;k++){
+      const col=k%cols, row=Math.floor(k/cols);
+      const x=cx-(cols*9)/2+col*9+5, y=22+row*9;
+      content += `<circle cx="${x}" cy="${y}" r="3.5" fill="#B5541B"/>`;
+    }
+    content += `<text x="${cx}" y="132" font-size="12" font-weight="700" text-anchor="middle" fill="#241F47" font-family="Nunito">Stage ${i+1}</text>`;
+  });
+  return svgWrap(content,w,h);
+}
+function svgGaugeDial(value,max){
+  const cx=150,cy=140,r=110,frac=value/max,angleDeg=180-frac*180,rad=angleDeg*Math.PI/180;
+  const nx=cx+(r-18)*Math.cos(rad), ny=cy-(r-18)*Math.sin(rad);
+  let ticks='';
+  for(let i=0;i<=10;i++){
+    const tfrac=i/10, tAngle=180-tfrac*180, trad=tAngle*Math.PI/180;
+    const x1=cx+r*Math.cos(trad), y1=cy-r*Math.sin(trad);
+    const x2=cx+(r-10)*Math.cos(trad), y2=cy-(r-10)*Math.sin(trad);
+    ticks += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#241F47" stroke-width="2"/>`;
+    if(i%2===0){
+      const lx=cx+(r-30)*Math.cos(trad), ly=cy-(r-30)*Math.sin(trad);
+      ticks += `<text x="${lx}" y="${ly+4}" font-size="10" text-anchor="middle" fill="#241F47" font-family="Nunito">${Math.round(tfrac*max)}</text>`;
+    }
+  }
+  return svgWrap(`
+    <path d="M ${cx-r} ${cy} A ${r} ${r} 0 0 1 ${cx+r} ${cy}" fill="none" stroke="#241F47" stroke-width="3"/>
+    ${ticks}
+    <line x1="${cx}" y1="${cy}" x2="${nx}" y2="${ny}" stroke="#B5541B" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="${cx}" cy="${cy}" r="6" fill="#241F47"/>
+  `,300,170);
+}
+
+/* ============================================================
+   QUESTION GENERATORS  (each returns {strand,prompt,diagram,choices,correctIndex,explain})
+   ============================================================ */
+/* ============================================================
+   DIFFICULTY LEVELS
+   1 = Basic, 2 = Advanced, 3 = Extension — generators read this to scale
+   number ranges, decimal places, shape/rule pools, etc.
+   ============================================================ */
+let currentLevel = 1;
+function L(l1,l2,l3){ return currentLevel===1?l1: currentLevel===2?l2:l3; }
+function Lri(l1,l2,l3){ const r=L(l1,l2,l3); return ri(r[0],r[1]); }
+function Lpick(l1,l2,l3){ return pick(L(l1,l2,l3)); }
+
+const QG = {};
+
+QG.placeValue = function(){
+  const digits = Lri([3,4],[4,5],[5,6]);
+  let numStr=''; for(let i=0;i<digits;i++) numStr += (i===0? ri(1,9): ri(0,9));
+  const num = parseInt(numStr,10);
+  const posIndex = ri(0,digits-1);
+  const power = digits-1-posIndex;
+  const names = {0:'ones',1:'tens',2:'hundreds',3:'thousands',4:'ten thousands',5:'hundred thousands'};
+  const digitAt = parseInt(numStr[posIndex]);
+  const value = digitAt*Math.pow(10,power);
+  const cand = new Set([value, digitAt]);
+  if(power>0) cand.add(digitAt*Math.pow(10,power-1));
+  cand.add(digitAt*Math.pow(10,power+1));
+  while(cand.size<4) cand.add(value + ri(1,40));
+  const arr = shuffle([...cand]);
+  return {
+    strand:'Number',
+    prompt:`In the number <b>${num.toLocaleString()}</b>, what is the value of the digit ${digitAt} in the ${names[power]} place?`,
+    diagram:null,
+    choices: arr.map(v=>v.toLocaleString()),
+    correctIndex: arr.indexOf(value),
+    explain:`The digit <b>${digitAt}</b> sits in the ${names[power]} place, so it's worth ${value.toLocaleString()}.`
+  };
+};
+QG.roundNearest = function(){
+  const unit=Lpick([10,100],[100,1000],[1000,10000]);
+  const numMax=Lpick([600],[9800],[98000]);
+  const numMin=Math.max(unit*2, 12);
+  const num=ri(numMin,numMax), rounded=Math.round(num/unit)*unit;
+  const {choices,correctIndex}=choicesFromCorrect(rounded,[unit,-unit,unit*2,-unit*2,unit*3,-unit*3],v=>v.toLocaleString());
+  return {strand:'Number', prompt:`Round <b>${num.toLocaleString()}</b> to the nearest ${unit}.`, diagram:null, choices, correctIndex,
+    explain:`${num.toLocaleString()} rounds to <b>${rounded.toLocaleString()}</b> when rounded to the nearest ${unit}.`};
+};
+QG.fractionEquivalent = function(){
+  const b=Lpick([2,3,4],[3,4,5,6],[4,5,6,8,9,10]), a=ri(1,b-1), k=Lpick([2,3],[2,3,4],[3,4,5]);
+  const correct=`${a*k}/${b*k}`;
+  const wrong=[`${a*k+1}/${b*k}`, `${a}/${b*k}`, `${a*k}/${b*k+k}`, `${a+1}/${b}`];
+  const {choices,correctIndex}=choicesFromStrings(correct,wrong);
+  return {strand:'Number', prompt:`Which fraction is equivalent to <b>${a}/${b}</b>?`, diagram:null, choices, correctIndex,
+    explain:`Multiply top and bottom of ${a}/${b} by ${k} to get <b>${correct}</b> — an equivalent fraction.`};
+};
+QG.fractionOfAmount = function(){
+  const b=Lpick([2,3,4],[2,3,4,5,6,8],[3,4,5,6,8,10,12]);
+  const mult=Lri([2,6],[4,10],[6,14]);
+  const amount=b*mult, a=ri(1,b-1);
+  const correct=(amount/b)*a;
+  const {choices,correctIndex}=choicesFromCorrect(correct,[amount/b, -(amount/b), a, -a, 5,-5,10,-10]);
+  return {strand:'Number', prompt:`What is <b>${a}/${b}</b> of ${amount}?`, diagram:null, choices, correctIndex,
+    explain:`${amount} ÷ ${b} = ${amount/b}, then ${amount/b} × ${a} = <b>${correct}</b>.`};
+};
+QG.decimalCompare = function(){
+  const mode=pick(['largest','smallest']);
+  const maxCents=Lpick([150],[500],[995]);
+  const set=new Set(); while(set.size<4){ set.add((ri(10,maxCents)/100).toFixed(2)); }
+  const nums=[...set].map(Number);
+  const target = mode==='largest'? Math.max(...nums): Math.min(...nums);
+  const choices = nums.map(n=>n.toFixed(2));
+  return {strand:'Number', prompt:`Which of these decimals is the ${mode}?`, diagram:null, choices,
+    correctIndex: nums.indexOf(target),
+    explain:`${target.toFixed(2)} is the ${mode} of the group when you compare each place value.`};
+};
+QG.multiplyWord = function(){
+  const a=Lri([2,6],[3,9],[6,12]), b=Lri([2,8],[4,15],[8,25]), correct=a*b;
+  const item=pick(['apples','stickers','marbles','shells','pencils','eggs']);
+  const containerPairs=[['box','boxes'],['bag','bags'],['crate','crates'],['carton','cartons'],['basket','baskets']];
+  const [containerSingle,containerPlural]=pick(containerPairs);
+  const {choices,correctIndex}=choicesFromCorrect(correct,[a,-a,b,-b,a+b,-(a+b),2*a,-2*a]);
+  return {strand:'Number', prompt:`Each ${containerSingle} holds ${b} ${item}. How many ${item} are in ${a} ${containerPlural}?`, diagram:null, choices, correctIndex,
+    explain:`${a} × ${b} = <b>${correct}</b>.`};
+};
+QG.divideWord = function(){
+  const groups=Lpick([2,3,4],[2,3,4,5,6,8],[3,4,6,7,8,9]);
+  const correct=Lri([2,9],[4,15],[6,20]); const total=groups*correct;
+  const item=pick(['lollies','cards','counters','buttons','grapes']);
+  const {choices,correctIndex}=choicesFromCorrect(correct,[groups,-groups,2,-2,3,-3,5,-5]);
+  return {strand:'Number', prompt:`${total} ${item} are shared equally among ${groups} friends. How many ${item} does each friend get?`, diagram:null, choices, correctIndex,
+    explain:`${total} ÷ ${groups} = <b>${correct}</b>.`};
+};
+QG.negativeNumbers = function(){
+  const start=Lri([-5,3],[-8,5],[-15,8]), change=Lri([2,8],[3,12],[5,20]), dir=pick(['rises','falls']);
+  const correct = dir==='rises'? start+change : start-change;
+  const svg = svgNumberLine(-20,20,5,start,'start');
+  const {choices,correctIndex}=choicesFromCorrect(correct,[change,-change,1,-1,2,-2]);
+  return {strand:'Number', prompt:`The temperature starts at ${start}°C. It ${dir} by ${change}°C. What is the new temperature?`, diagram:svg, choices, correctIndex,
+    explain:`${start}°C ${dir==='rises'?'+':'−'} ${change}°C = <b>${correct}°C</b>.`};
+};
+QG.factorsMultiples = function(){
+  const mode=pick(['factor','multiple']);
+  if(mode==='factor'){
+    const n=Lpick([12,18,24],[12,18,24,36,42,48,60],[36,42,48,60,72,84,96]);
+    const divs=[]; for(let i=2;i<n;i++) if(n%i===0) divs.push(i);
+    const correct=pick(divs);
+    const nonDivs=[]; for(let i=2;i<n+15;i++) if(n%i!==0 && !nonDivs.includes(i)) nonDivs.push(i);
+    const wrong = shuffle(nonDivs).slice(0,3);
+    const {choices,correctIndex}=choicesFromStrings(String(correct), wrong.map(String));
+    return {strand:'Number', prompt:`Which of these numbers is a factor of <b>${n}</b>?`, diagram:null, choices, correctIndex,
+      explain:`${n} ÷ ${correct} = ${n/correct} exactly, so ${correct} is a factor of ${n}.`};
+  } else {
+    const n=Lpick([2,3,4,5],[3,4,5,6,7],[6,7,8,9,11]);
+    const k=Lri([3,8],[6,12],[9,15]); const correct=n*k;
+    const wrongSet=new Set();
+    [correct+1,correct-1,correct+2,correct-2,correct+3,correct-3].forEach(v=>{ if(v>0 && v%n!==0) wrongSet.add(v); });
+    let guard=0;
+    while(wrongSet.size<3 && guard<50){ guard++; const v=correct+ri(1,10)*(Math.random()<0.5?-1:1); if(v>0 && v%n!==0) wrongSet.add(v); }
+    const wrong=[...wrongSet].slice(0,3).map(String);
+    const {choices,correctIndex}=choicesFromStrings(String(correct), wrong);
+    return {strand:'Number', prompt:`Which of these numbers is a multiple of <b>${n}</b>?`, diagram:null, choices, correctIndex,
+      explain:`${correct} = ${n} × ${k}, so it's a multiple of ${n}.`};
+  }
+};
+QG.money = function(){
+  const priceCents=Lri([105,495],[155,895],[205,1995]); const price=priceCents/100;
+  const paidPool = L([2,5,10],[5,10,20,50],[10,20,50,100]).filter(p=>p*100>priceCents);
+  const paid = paidPool.length? pick(paidPool) : Math.ceil(priceCents/100)+5;
+  const changeCents = paid*100-priceCents; const correct=(changeCents/100).toFixed(2);
+  const wrongCents=[changeCents+100,changeCents-100,changeCents+50,changeCents-50,changeCents+200].filter(v=>v>0 && v!==changeCents);
+  const wrong = shuffle(wrongCents).slice(0,3).map(v=>v/100);
+  const {choices,correctIndex}=choicesFromStrings(fmtMoney(Number(correct)), wrong.map(fmtMoney));
+  return {strand:'Number', prompt:`A toy koala costs ${fmtMoney(price)}. You pay with a $${paid} note. How much change do you get?`, diagram:null, choices, correctIndex,
+    explain:`$${paid} − ${fmtMoney(price)} = <b>${fmtMoney(Number(correct))}</b> change.`};
+};
+QG.orderOps = function(){
+  const a=Lri([2,5],[2,9],[4,12]), b=Lri([2,5],[2,9],[4,12]), c=Lri([2,5],[2,9],[4,12]);
+  const correct=(a+b)*c;
+  const commonMistake = a+b*c;
+  const {choices,correctIndex}=choicesFromCorrect(correct,[commonMistake-correct, a*c, -a*c, c, -c]);
+  return {strand:'Number', prompt:`What is (${a} + ${b}) × ${c}?`, diagram:null, choices, correctIndex,
+    explain:`Work out the brackets first: (${a}+${b}) = ${a+b}, then ${a+b} × ${c} = <b>${correct}</b>.`};
+};
+
+QG.pattern = function(){
+  const start=Lri([1,15],[1,25],[5,60]), step=Lri([2,8],[2,12],[4,20]), op=pick(['add','subtract']);
+  let seq=[start];
+  for(let i=1;i<4;i++) seq.push(op==='add'? seq[i-1]+step : seq[i-1]-step);
+  if(op==='subtract' && seq[3]-step<0) return QG.pattern();
+  const correct = op==='add'? seq[3]+step : seq[3]-step;
+  const {choices,correctIndex}=choicesFromCorrect(correct,[step,-step,step*2,-step*2,1,-1]);
+  return {strand:'Algebra', prompt:`What is the next number in this pattern?<br><b style="font-size:20px">${seq.join(', ')}, ___</b>`, diagram:null, choices, correctIndex,
+    explain:`The rule is "${op==='add'?'add':'subtract'} ${step}" each time, so the next number is <b>${correct}</b>.`};
+};
+QG.missingBox = function(){
+  const op=pick(['+','-']);
+  let a,b,result,correct;
+  if(op==='+'){ a=Lri([6,30],[6,60],[20,150]); b=Lri([4,25],[4,50],[10,100]); result=a+b; correct=b; }
+  else { a=Lri([15,45],[20,90],[50,250]); b=Lri([4,Math.floor(a/2)],[4,a-4],[10,Math.max(11,a-20)]); result=a-b; correct=b; }
+  const {choices,correctIndex}=choicesFromCorrect(correct,[1,-1,2,-2,5,-5]);
+  return {strand:'Algebra', prompt:`${a} ${op} ▢ = ${result}<br>What number goes in the box?`, diagram:null, choices, correctIndex,
+    explain: op==='+' ? `${result} − ${a} = <b>${correct}</b>.` : `${a} − ${result} = <b>${correct}</b>.`};
+};
+QG.functionMachine = function(){
+  const rulesByLevel = {
+    1: [ {name:'Add 7', fn:x=>x+7}, {name:'Multiply by 3', fn:x=>x*3} ],
+    2: [ {name:'Double, then add 1', fn:x=>x*2+1}, {name:'Multiply by 3', fn:x=>x*3}, {name:'Add 7', fn:x=>x+7}, {name:'Double, then subtract 2', fn:x=>x*2-2} ],
+    3: [ {name:'Double, then add 1', fn:x=>x*2+1}, {name:'Triple, then add 5', fn:x=>x*3+5}, {name:'Double, then subtract 2', fn:x=>x*2-2}, {name:'Multiply by 4, then add 3', fn:x=>x*4+3} ]
+  };
+  const r=pick(rulesByLevel[currentLevel]);
+  const i1=Lri([1,4],[1,5],[2,8]), i2=Lri([5,8],[6,9],[9,13]), i3=Lri([9,13],[10,14],[14,20]);
+  const correct=r.fn(i3);
+  const table = `<table><tr><th>Input</th><th>Output</th></tr><tr><td>${i1}</td><td>${r.fn(i1)}</td></tr><tr><td>${i2}</td><td>${r.fn(i2)}</td></tr><tr><td>${i3}</td><td>?</td></tr></table>`;
+  const {choices,correctIndex}=choicesFromCorrect(correct,[1,-1,2,-2,3,-3]);
+  return {strand:'Algebra', prompt:`This machine follows a rule. What output goes with input ${i3}?`, diagram:table, choices, correctIndex,
+    explain:`The rule is "${r.name}", so for ${i3} the output is <b>${correct}</b>.`};
+};
+
+QG.areaGrid = function(){
+  const cols=Lri([2,4],[3,6],[4,7]), rows=Lri([2,3],[3,5],[4,6]);
+  let filled=[]; for(let c=0;c<cols;c++) for(let r=0;r<rows;r++) filled.push([c,r]);
+  if(Math.random()<0.4 && filled.length>4){
+    const removeN=ri(1,Math.min(3,filled.length-4));
+    for(let i=0;i<removeN;i++){ filled.splice(ri(0,filled.length-1),1); }
+  }
+  const correct=filled.length;
+  const svg=svgGridShape(cols,rows,filled);
+  const {choices,correctIndex}=choicesFromCorrect(correct,[1,-1,2,-2,3,-3]);
+  return {strand:'Measurement', prompt:`This shape is drawn on a grid. Each square is 1 square unit. What is the area of the shape?`, diagram:svg, choices, correctIndex,
+    explain:`Count the coloured squares: there are <b>${correct}</b> square units.`};
+};
+QG.perimeterRect = function(){
+  const w=Lri([2,8],[3,15],[8,25]), h=Lri([2,6],[2,12],[6,20]);
+  const correct=2*(w+h);
+  const svg=svgLabeledRect(w,h);
+  const {choices,correctIndex}=choicesFromCorrect(correct,[w*h-correct, w, -w, h, -h, 2,-2]);
+  return {strand:'Measurement', prompt:`What is the perimeter of this rectangle?`, diagram:svg, choices, correctIndex,
+    explain:`Perimeter = 2 × (${w} + ${h}) = <b>${correct} units</b>.`};
+};
+QG.timeDuration = function(){
+  const startH=ri(1,11), startM=pick([0,15,30,45]);
+  const durPool=Lpick([15,30,60],[15,30,45,60,75,90,120],[45,75,90,105,120,135,150,165,195]);
+  const durMin=durPool;
+  let totalStart = startH*60+startM, totalEnd = totalStart+durMin;
+  let endH=Math.floor(totalEnd/60)%12; if(endH===0) endH=12; const endM=totalEnd%60;
+  const correct=formatDuration(durMin);
+  const candidateMins=[15,30,45,60,75,90,105,120,135,150,165,180,195].filter(m=>m!==durMin);
+  const wrongSet=new Set();
+  shuffle(candidateMins).forEach(m=>{ const s=formatDuration(m); if(s!==correct) wrongSet.add(s); });
+  const wrong=[...wrongSet].slice(0,3);
+  const {choices,correctIndex}=choicesFromStrings(correct, wrong);
+  return {strand:'Measurement', prompt:`A footy match starts at ${formatTime(startH,startM)} and finishes at ${formatTime(endH,endM)}. How long did it go for?`, diagram:null, choices, correctIndex,
+    explain:`From ${formatTime(startH,startM)} to ${formatTime(endH,endM)} is <b>${correct}</b>.`};
+};
+QG.clockRead = function(){
+  const minutePool=Lpick([0,15,30,45],[0,5,10,15,20,25,30,35,40,45,50,55],[0,5,10,15,20,25,30,35,40,45,50,55]);
+  const h=ri(1,12), m=minutePool;
+  const svg=svgClock(h,m);
+  const correct=formatTime(h,m);
+  let altH=h+1; if(altH>12) altH=1;
+  const wrongTimes=[formatTime(h, (m+15)%60), formatTime(altH,m), formatTime(h,(m+55)%60===m?((m+10)%60):(m+55)%60)];
+  const {choices,correctIndex}=choicesFromStrings(correct, wrongTimes);
+  return {strand:'Measurement', prompt:`What time does this clock show?`, diagram:svg, choices, correctIndex,
+    explain:`The hour hand and minute hand together show <b>${correct}</b>.`};
+};
+QG.unitConvert = function(){
+  const allTypes=[
+    {q:v=>`Convert ${v} cm to metres.`, conv:v=>(v/100), unit:'m', vmin:100,vmax:900,step:10},
+    {q:v=>`Convert ${v} mm to centimetres.`, conv:v=>(v/10), unit:'cm', vmin:20,vmax:900,step:10},
+    {q:v=>`Convert ${v} m to kilometres.`, conv:v=>(v/1000), unit:'km', vmin:1000,vmax:9000,step:100},
+    {q:v=>`Convert ${v} g to kilograms.`, conv:v=>(v/1000), unit:'kg', vmin:1000,vmax:9000,step:100},
+    {q:v=>`Convert ${v} mL to litres.`, conv:v=>(v/1000), unit:'L', vmin:1000,vmax:9000,step:100}
+  ];
+  const typePool = L(allTypes.slice(0,2), allTypes.slice(0,4), allTypes);
+  const t=pick(typePool);
+  const v = Math.round(ri(t.vmin/t.step,t.vmax/t.step))*t.step;
+  const correct = t.conv(v);
+  const fmt = n=> (Number.isInteger(n)? n : n.toFixed(2)) + ' ' + t.unit;
+  const {choices,correctIndex}=choicesFromCorrect(correct,[1,-1,0.5,-0.5,10,-10,correct,-2*correct].filter(d=>true), fmt);
+  return {strand:'Measurement', prompt:t.q(v), diagram:null, choices, correctIndex,
+    explain:`${v} converts to <b>${fmt(correct)}</b>.`};
+};
+QG.thermometerRead = function(){
+  const bounds = L([0,30],[-5,38],[-15,45]);
+  const val=ri(bounds[0],bounds[1]);
+  const svg=svgThermometer(val,-15,50);
+  const {choices,correctIndex}=choicesFromCorrect(val,[2,-2,5,-5,10,-10],v=>`${v}°C`);
+  return {strand:'Measurement', prompt:`What temperature is shown on the thermometer?`, diagram:svg, choices, correctIndex,
+    explain:`The red line sits at <b>${val}°C</b>.`};
+};
+
+QG.angleType = function(){
+  const degPool = L(
+    [30,45,60,90,120,135,150],
+    [25,40,60,75,90,110,130,150,165],
+    [25,40,60,75,90,110,130,150,165,200,240,290,320]
+  );
+  const deg=pick(degPool);
+  const svg=svgAngle(deg);
+  let correct;
+  if(deg===90) correct='right angle';
+  else if(deg<90) correct='acute angle';
+  else if(deg<180) correct='obtuse angle';
+  else correct='reflex angle';
+  const all=['acute angle','right angle','obtuse angle','reflex angle'];
+  const {choices,correctIndex}=choicesFromStrings(correct, all.filter(a=>a!==correct));
+  return {strand:'Space', prompt:`What type of angle is shown?`, diagram:svg, choices, correctIndex,
+    explain:`This angle measures about ${deg}°, which makes it a(n) <b>${correct}</b>.`};
+};
+QG.shapeProperties = function(){
+  const shapes={
+    'cube':{v:8,e:12,f:6},
+    'rectangular prism':{v:8,e:12,f:6},
+    'triangular prism':{v:6,e:9,f:5},
+    'square pyramid':{v:5,e:8,f:5}
+  };
+  const namePool = L(['cube','rectangular prism'], ['cube','rectangular prism','triangular prism'], Object.keys(shapes));
+  const s=pick(namePool);
+  const attr=pick(['vertices','edges','faces']);
+  const key=attr==='vertices'?'v':attr==='edges'?'e':'f';
+  const correct=shapes[s][key];
+  const svg=svgShape3D(s);
+  const {choices,correctIndex}=choicesFromCorrect(correct,[1,-1,2,-2,3,-3]);
+  return {strand:'Space', prompt:`How many ${attr} does a ${s} have?`, diagram:svg, choices, correctIndex,
+    explain:`A ${s} has <b>${correct} ${attr}</b>.`};
+};
+QG.symmetry = function(){
+  const allOpts=[
+    {name:'square', sides:4, irregular:null, lines:4},
+    {name:'rectangle', sides:4, irregular:'rect', lines:2},
+    {name:'equilateral triangle', sides:3, irregular:null, lines:3},
+    {name:'regular pentagon', sides:5, irregular:null, lines:5},
+    {name:'trapezium', sides:4, irregular:'trap', lines:1},
+    {name:'regular hexagon', sides:6, irregular:null, lines:6}
+  ];
+  const optPool = L(allOpts.slice(0,3), allOpts.slice(0,5), allOpts);
+  const o=pick(optPool);
+  const svg=svgPolygonShape(o.sides,o.irregular);
+  const {choices,correctIndex}=choicesFromCorrect(o.lines,[1,-1,2,-2,3]);
+  return {strand:'Space', prompt:`How many lines of symmetry does this ${o.name} have?`, diagram:svg, choices, correctIndex,
+    explain:`A regular ${o.name} has <b>${o.lines}</b> line${o.lines===1?'':'s'} of symmetry.`};
+};
+QG.coordinates = function(){
+  const size=Lpick([4],[5],[6]); const px=ri(0,size-1), py=ri(0,size-1);
+  const svg=svgCoordGrid(px,py,size);
+  const cols='ABCDEFGH'.slice(0,size);
+  const correct=`${cols[px]}${py+1}`;
+  const wrong=new Set();
+  const tries=[[px,py+1],[px+1,py],[px-1,py],[px,py-1],[px+1,py+1],[px-1,py-1]];
+  tries.forEach(([x,y])=>{ if(x>=0&&x<size&&y>=0&&y<size){ const s=`${cols[x]}${y+1}`; if(s!==correct) wrong.add(s);} });
+  let guard=0;
+  while(wrong.size<3 && guard<100){ guard++; const s=`${pick(cols.split(''))}${ri(1,size)}`; if(s!==correct) wrong.add(s); }
+  const {choices,correctIndex}=choicesFromStrings(correct,[...wrong].slice(0,3));
+  return {strand:'Space', prompt:`What is the grid reference of the dot?`, diagram:svg, choices, correctIndex,
+    explain:`The dot is in column <b>${cols[px]}</b> and row <b>${py+1}</b>, so its reference is <b>${correct}</b>.`};
+};
+QG.cubeNet = function(){
+  const allVariants=[
+    {svg:svgCubeNet(), correct:'Cube', reason:'Six equal squares arranged like this fold up into a cube.'},
+    {svg:svgTriPrismNet(), correct:'Triangular prism', reason:'A rectangle with a triangle at each end folds up into a triangular prism.'},
+    {svg:svgPyramidNet(), correct:'Square pyramid', reason:'A square base with four triangles folds up into a square pyramid.'}
+  ];
+  const variantPool = L(allVariants.slice(0,1), allVariants.slice(0,2), allVariants);
+  const v=pick(variantPool);
+  const allNames=['Cube','Cone','Cylinder','Square pyramid','Triangular prism','Rectangular prism'];
+  const wrong = shuffle(allNames.filter(n=>n!==v.correct)).slice(0,3);
+  const {choices,correctIndex}=choicesFromStrings(v.correct, wrong);
+  return {strand:'Space', prompt:`If you fold this net along the lines, which 3D shape do you make?`, diagram:v.svg, choices, correctIndex,
+    explain:v.reason};
+};
+
+QG.barGraph = function(){
+  const catPool=['Dogs','Cats','Birds','Fish','Rabbits','Turtles'];
+  const categories=shuffle(catPool).slice(0,4);
+  const vr = L([2,10],[3,22],[8,35]);
+  let values=categories.map(()=>ri(vr[0],vr[1]));
+  while(new Set(values).size<4) values=categories.map(()=>ri(vr[0],vr[1]));
+  const svg=svgBarChart(categories,values);
+  const qType=pick(['max','min','diff','total']);
+  if(qType==='max' || qType==='min'){
+    const target = qType==='max'? Math.max(...values): Math.min(...values);
+    const idx = values.indexOf(target);
+    const correct=categories[idx];
+    const {choices,correctIndex}=choicesFromStrings(correct, categories.filter(c=>c!==correct));
+    return {strand:'Statistics', prompt:`This graph shows favourite pets in a class. Which pet is the ${qType==='max'?'most':'least'} popular?`, diagram:svg, choices, correctIndex,
+      explain:`${correct} has the ${qType==='max'?'tallest':'shortest'} bar, so it's the ${qType==='max'?'most':'least'} popular.`};
+  } else if(qType==='diff'){
+    let i=ri(0,3), j=ri(0,3); while(j===i) j=ri(0,3);
+    if(values[i]<values[j]) [i,j]=[j,i];
+    const correct=values[i]-values[j];
+    const {choices,correctIndex}=choicesFromCorrect(correct,[1,-1,2,-2,3,-3]);
+    return {strand:'Statistics', prompt:`How many more ${categories[i]} are there than ${categories[j]}?`, diagram:svg, choices, correctIndex,
+      explain:`${values[i]} − ${values[j]} = <b>${correct}</b>.`};
+  } else {
+    const correct=values.reduce((a,b)=>a+b,0);
+    const {choices,correctIndex}=choicesFromCorrect(correct,[1,-1,2,-2,5,-5]);
+    return {strand:'Statistics', prompt:`What is the total number of pets shown on the graph?`, diagram:svg, choices, correctIndex,
+      explain:`Add all the bars: ${values.join(' + ')} = <b>${correct}</b>.`};
+  }
+};
+QG.pictograph = function(){
+  const catPool=['Mon','Tue','Wed','Thu','Fri'];
+  const categories=shuffle(catPool).slice(0,4);
+  const iconVal=Lpick([2],[2,5],[5,10]);
+  const cr = L([1,4],[1,6],[2,9]);
+  const counts=categories.map(()=>iconVal*ri(cr[0],cr[1]));
+  const svg=svgPictograph(categories,counts,iconVal);
+  const qType=pick(['read','total']);
+  if(qType==='read'){
+    const idx=ri(0,3); const correct=counts[idx];
+    const {choices,correctIndex}=choicesFromCorrect(correct,[iconVal,-iconVal,iconVal*2,-iconVal*2]);
+    return {strand:'Statistics', prompt:`This pictograph shows books borrowed each day. How many books were borrowed on ${categories[idx]}?`, diagram:svg, choices, correctIndex,
+      explain:`Each symbol = ${iconVal} books, so ${categories[idx]} shows <b>${correct}</b> books.`};
+  } else {
+    const correct=counts.reduce((a,b)=>a+b,0);
+    const {choices,correctIndex}=choicesFromCorrect(correct,[iconVal,-iconVal,iconVal*2,-iconVal*2,5,-5]);
+    return {strand:'Statistics', prompt:`How many books were borrowed in total across all the days shown?`, diagram:svg, choices, correctIndex,
+      explain:`Add every row: ${counts.join(' + ')} = <b>${correct}</b>.`};
+  }
+};
+QG.probability = function(){
+  const rr = L([1,4],[1,7],[2,10]);
+  const red=ri(rr[0],rr[1]), blue=ri(rr[0],rr[1]); const total=red+blue;
+  const askColor=pick(['red','blue']); const count=askColor==='red'?red:blue;
+  const correct=`${count}/${total}`;
+  const wrong=[`${total-count}/${total}`, `${count}/${count}`, `${count}/${total+1}`, `${total}/${count}`].filter(w=>w!==correct);
+  const {choices,correctIndex}=choicesFromStrings(correct, wrong);
+  return {strand:'Statistics', prompt:`A bag has ${red} red marbles and ${blue} blue marbles. If you pick one marble without looking, what is the probability it is ${askColor}?`, diagram:null, choices, correctIndex,
+    explain:`There are ${count} ${askColor} marbles out of ${total} total, so the probability is <b>${correct}</b>.`};
+};
+QG.tableRead = function(){
+  const catPool=['Apples','Bananas','Oranges','Grapes','Pears'];
+  const categories=shuffle(catPool).slice(0,4);
+  const vr = L([2,10],[4,30],[10,50]);
+  const values=categories.map(()=>ri(vr[0],vr[1]));
+  const table=`<table><tr>${categories.map(c=>`<th>${c}</th>`).join('')}</tr><tr>${values.map(v=>`<td>${v}</td>`).join('')}</tr></table>`;
+  const qType=pick(['max','diff']);
+  if(qType==='max'){
+    const target=Math.max(...values); const idx=values.indexOf(target); const correct=categories[idx];
+    const {choices,correctIndex}=choicesFromStrings(correct, categories.filter(c=>c!==correct));
+    return {strand:'Statistics', prompt:`This table shows fruit sold at a stall. Which fruit sold the most?`, diagram:table, choices, correctIndex,
+      explain:`${correct} has the highest number sold: ${target}.`};
+  } else {
+    let i=ri(0,3), j=ri(0,3); while(j===i) j=ri(0,3);
+    if(values[i]<values[j]) [i,j]=[j,i];
+    const correct=values[i]-values[j];
+    const {choices,correctIndex}=choicesFromCorrect(correct,[1,-1,2,-2,3,-3]);
+    return {strand:'Statistics', prompt:`How many more ${categories[i]} were sold than ${categories[j]}?`, diagram:table, choices, correctIndex,
+      explain:`${values[i]} − ${values[j]} = <b>${correct}</b>.`};
+  }
+};
+
+QG.addSubWord = function(){
+  const x=Lri([30,150],[80,450],[200,900]), y=Lri([10,60],[20,180],[50,300]);
+  const z=ri(10,Math.min(Math.round((x+y)*0.4), x+y-15));
+  const correct = x+y-z;
+  const place=pick(['market','fair','beach','museum','library']);
+  const {choices,correctIndex}=choicesFromCorrect(correct,[z,-z,y,-y,10,-10,5,-5]);
+  return {strand:'Number', prompt:`There are ${x} people at the ${place}. ${y} more arrive, then ${z} leave. How many people are at the ${place} now?`, diagram:null, choices, correctIndex,
+    explain:`${x} + ${y} − ${z} = <b>${correct}</b>.`};
+};
+QG.squareNumbers = function(){
+  const n=Lri([2,6],[2,12],[6,18]), correct=n*n;
+  const {choices,correctIndex}=choicesFromCorrect(correct,[n,-n,2*n,-2*n,1,-1]);
+  return {strand:'Number', prompt:`What is ${n}² (${n} × ${n})?`, diagram:null, choices, correctIndex,
+    explain:`${n} × ${n} = <b>${correct}</b>.`};
+};
+QG.inverseOperation = function(){
+  const A=Lpick([2,3],[2,3,4,5],[3,4,5,6,7]);
+  const x=Lri([2,10],[2,20],[5,40]), B=Lri([1,10],[1,20],[5,40]), C=x*A+B;
+  const {choices,correctIndex}=choicesFromCorrect(x,[1,-1,2,-2,3,-3]);
+  return {strand:'Algebra', prompt:`I think of a number. I multiply it by ${A}, then add ${B}. The answer is ${C}. What is my number?`, diagram:null, choices, correctIndex,
+    explain:`Work backwards: (${C} − ${B}) ÷ ${A} = <b>${x}</b>.`};
+};
+QG.visualPattern = function(){
+  const a=Lri([1,3],[1,4],[2,6]), d=Lri([2,4],[2,5],[3,8]);
+  const counts=[a,a+d,a+2*d];
+  const correct=a+3*d;
+  const svg=svgGrowingPattern(counts);
+  const {choices,correctIndex}=choicesFromCorrect(correct,[d,-d,1,-1,2,-2]);
+  return {strand:'Algebra', prompt:`This dot pattern grows by the same amount at every stage. How many dots will Stage 4 have?`, diagram:svg, choices, correctIndex,
+    explain:`Each stage adds ${d} dots, so Stage 4 has ${counts[2]} + ${d} = <b>${correct}</b> dots.`};
+};
+QG.capacityWord = function(){
+  const totalML=Lpick([500,750,1000],[1000,1500,2000,2500,3000],[2000,3000,4000,5000,6000]);
+  const pourML=ri(100,totalML-200);
+  const correct=totalML-pourML;
+  const {choices,correctIndex}=choicesFromCorrect(correct,[50,-50,100,-100,200,-200],v=>`${v} mL`);
+  return {strand:'Measurement', prompt:`A jug holds ${totalML} mL of juice. Sam pours out ${pourML} mL to drink. How much juice is left in the jug?`, diagram:null, choices, correctIndex,
+    explain:`${totalML} mL − ${pourML} mL = <b>${correct} mL</b>.`};
+};
+QG.scaleReading = function(){
+  const max=Lpick([500],[500,1000],[1000,2000]), step=max/10, value=step*ri(1,9);
+  const svg=svgGaugeDial(value,max);
+  const {choices,correctIndex}=choicesFromCorrect(value,[step,-step,step*2,-step*2],v=>`${v} g`);
+  return {strand:'Measurement', prompt:`What weight, in grams, does the kitchen scale show?`, diagram:svg, choices, correctIndex,
+    explain:`The needle points to <b>${value} g</b> on the dial.`};
+};
+QG.shapeIdentify = function(){
+  const names={3:'triangle',4:'quadrilateral',5:'pentagon',6:'hexagon',7:'heptagon',8:'octagon'};
+  const sides=Lpick([3,4,5],[3,4,5,6],[5,6,7,8]);
+  const svg=svgPolygonShape(sides,null);
+  const correct=names[sides];
+  const others=Object.values(names).filter(n=>n!==correct);
+  const {choices,correctIndex}=choicesFromStrings(correct, shuffle(others).slice(0,3));
+  return {strand:'Space', prompt:`What is the name of this shape?`, diagram:svg, choices, correctIndex,
+    explain:`A shape with ${sides} sides is called a(n) <b>${correct}</b>.`};
+};
+QG.sidesCount = function(){
+  const names={3:'triangle',4:'quadrilateral',5:'pentagon',6:'hexagon',7:'heptagon',8:'octagon'};
+  const sides=Lpick([3,4,5],[3,4,5,6],[5,6,7,8]);
+  const svg=svgPolygonShape(sides,null);
+  const {choices,correctIndex}=choicesFromCorrect(sides,[1,-1,2,-2]);
+  return {strand:'Space', prompt:`How many sides does this ${names[sides]} have?`, diagram:svg, choices, correctIndex,
+    explain:`A ${names[sides]} has <b>${sides}</b> sides.`};
+};
+QG.modeQuestion = function(){
+  const maxN=Lpick([10],[20],[30]);
+  const pool=shuffle([...Array(maxN).keys()].map(n=>n+1)).slice(0,4);
+  const repeatVal=pool[0];
+  let list=[repeatVal,repeatVal,repeatVal,pool[1],pool[2],pool[3]];
+  list=shuffle(list);
+  const chips=`<div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;max-width:280px">${list.map(v=>`<span style="background:#F6EAD0;border:2px solid #E9D5A6;border-radius:10px;padding:8px 14px;font-weight:800;color:#241F47;font-family:Nunito">${v}</span>`).join('')}</div>`;
+  const {choices,correctIndex}=choicesFromStrings(String(repeatVal), pool.slice(1).map(String));
+  return {strand:'Statistics', prompt:`Here is a list of numbers a class rolled on a dice game. Which number appears most often?`, diagram:chips, choices, correctIndex,
+    explain:`<b>${repeatVal}</b> appears three times — more than any other number in the list.`};
+};
+
+const GROUPS = {
+  Number: [QG.placeValue, QG.roundNearest, QG.fractionEquivalent, QG.fractionOfAmount, QG.decimalCompare, QG.multiplyWord, QG.divideWord, QG.negativeNumbers, QG.factorsMultiples, QG.money, QG.orderOps, QG.addSubWord, QG.squareNumbers],
+  Algebra: [QG.pattern, QG.missingBox, QG.functionMachine, QG.inverseOperation, QG.visualPattern],
+  Measurement: [QG.areaGrid, QG.perimeterRect, QG.timeDuration, QG.clockRead, QG.unitConvert, QG.thermometerRead, QG.capacityWord, QG.scaleReading],
+  Space: [QG.angleType, QG.shapeProperties, QG.symmetry, QG.coordinates, QG.cubeNet, QG.shapeIdentify, QG.sidesCount],
+  Statistics: [QG.barGraph, QG.pictograph, QG.probability, QG.tableRead, QG.modeQuestion]
+};
+const PLAN = {Number:16, Algebra:3, Measurement:8, Space:8, Statistics:5}; // 40 total, matches real NAPLAN Y5 numeracy length
+
+// A true duplicate means the same prompt, the same diagram, AND the same set of
+// answer choices — not just the same phrasing (two different bar-graph questions
+// can legitimately share a sentence like "which pet is most popular?").
+function questionSignature(q){
+  return q.prompt + '||' + (q.diagram||'') + '||' + q.choices.join('|');
+}
+
+function buildTest(level){
+  currentLevel = level || currentLevel || 1;
+  const seenForLevel = (progress.seenSigs && progress.seenSigs[currentLevel]) || [];
+  const recentSigs = new Set(seenForLevel);
+
+  let qs=[]; const usedSigs=new Set();
+  Object.keys(PLAN).forEach(strand=>{
+    const pool=GROUPS[strand]; const need=PLAN[strand];
+    // build a long enough generator order by repeatedly reshuffling the pool,
+    // so every generator in the strand gets used before any repeats
+    let order=[];
+    while(order.length<need) order=order.concat(shuffle(pool));
+    for(let i=0;i<need;i++){
+      const gen = order[i];
+      let q, tries=0, sig;
+      do{
+        try{ q=gen(); }catch(e){ q=pool[0](); }
+        sig = questionSignature(q);
+        tries++;
+        // First avoid anything already used earlier in THIS test, and anything seen
+        // recently at this level (rolling window across past sessions). If a generator
+        // genuinely can't produce anything fresh after several tries, accept the repeat
+        // rather than loop forever — procedural variety has natural limits.
+      } while((usedSigs.has(sig) || recentSigs.has(sig)) && tries<10);
+      usedSigs.add(sig);
+      qs.push(q);
+    }
+  });
+
+  // Remember this test's questions for this level so future attempts at the same
+  // level avoid repeating them for a while. Rolling window keeps storage bounded.
+  progress.seenSigs = progress.seenSigs || {1:[],2:[],3:[]};
+  const merged = (progress.seenSigs[currentLevel]||[]).concat([...usedSigs]);
+  progress.seenSigs[currentLevel] = merged.slice(-1500);
+  saveProgress(progress);
+
+  return shuffle(qs);
+}
+
+/* ============================================================
+   MASCOT
+   ============================================================ */
+function mascotSVG(mood){
+  const mouths = {
+    happy: `<path d="M62 96 Q80 116 98 96" stroke="#241F47" stroke-width="5" fill="none" stroke-linecap="round"/>`,
+    excited: `<ellipse cx="80" cy="100" rx="16" ry="12" fill="#241F47"/>`,
+    thinking: `<line x1="65" y1="100" x2="95" y2="98" stroke="#241F47" stroke-width="5" stroke-linecap="round"/>`,
+    sad: `<path d="M62 104 Q80 88 98 104" stroke="#241F47" stroke-width="5" fill="none" stroke-linecap="round"/>`,
+    neutral: `<line x1="66" y1="98" x2="94" y2="98" stroke="#241F47" stroke-width="5" stroke-linecap="round"/>`
+  };
+  const eyes = mood==='excited'
+    ? `<circle cx="60" cy="72" r="7" fill="#241F47"/><circle cx="100" cy="72" r="7" fill="#241F47"/><circle cx="57" cy="69" r="2" fill="#fff"/><circle cx="97" cy="69" r="2" fill="#fff"/>`
+    : `<circle cx="60" cy="74" r="6" fill="#241F47"/><circle cx="100" cy="74" r="6" fill="#241F47"/>`;
+  const brows = mood==='thinking' ? `<path d="M50 60 Q60 52 70 60" stroke="#241F47" stroke-width="3" fill="none"/>` : '';
+  return `<svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="45" cy="35" rx="14" ry="26" fill="#D89A5C" transform="rotate(-18 45 35)"/>
+    <ellipse cx="115" cy="35" rx="14" ry="26" fill="#D89A5C" transform="rotate(18 115 35)"/>
+    <ellipse cx="45" cy="38" rx="7" ry="15" fill="#F6D9BB" transform="rotate(-18 45 38)"/>
+    <ellipse cx="115" cy="38" rx="7" ry="15" fill="#F6D9BB" transform="rotate(18 115 38)"/>
+    <circle cx="80" cy="90" r="62" fill="#E3A968"/>
+    <ellipse cx="80" cy="108" rx="30" ry="24" fill="#F6D9BB"/>
+    ${eyes}${brows}
+    <ellipse cx="80" cy="90" rx="9" ry="6" fill="#241F47"/>
+    ${mouths[mood]||mouths.neutral}
+  </svg>`;
+}
+
+/* ============================================================
+   AUDIO (tiny synth beeps, no files)
+   ============================================================ */
+let audioCtx=null, muted=false;
+function beep(freq,dur,type){
+  if(muted) return;
+  try{
+    audioCtx = audioCtx || new (window.AudioContext||window.webkitAudioContext)();
+    const osc=audioCtx.createOscillator(), gain=audioCtx.createGain();
+    osc.type=type||'sine'; osc.frequency.value=freq;
+    gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime+dur);
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.start(); osc.stop(audioCtx.currentTime+dur);
+  }catch(e){}
+}
+function sndCorrect(){ beep(660,.12); setTimeout(()=>beep(880,.16),90); }
+function sndWrong(){ beep(180,.22,'sawtooth'); }
+function sndFanfare(){ [523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,.22),i*130)); }
+
+/* ============================================================
+   PERSISTENCE
+   ============================================================ */
+const STORE_KEY='naplan_quest_progress_v1';
+function loadProgress(){
+  try{
+    const raw=localStorage.getItem(STORE_KEY);
+    if(raw){
+      const p=JSON.parse(raw);
+      if(!Array.isArray(p.history)) p.history=[];
+      if(!Array.isArray(p.recentQuizzes)) p.recentQuizzes=[];
+      if(!p.levelCounts) p.levelCounts={1:0,2:0,3:0};
+      if(typeof p.level3GoldStreak !== 'number') p.level3GoldStreak=0;
+      if(!Array.isArray(p.coupons)) p.coupons=[];
+      if(!p.seenSigs) p.seenSigs={1:[],2:[],3:[]};
+      return p;
+    }
+  }catch(e){}
+  return {testsCompleted:0, bestScore:0, goldStreak:0, badges:{bronze:0,silver:0,gold:0,diamond:0},
+    history:[], recentQuizzes:[], levelCounts:{1:0,2:0,3:0}, level3GoldStreak:0, coupons:[], seenSigs:{1:[],2:[],3:[]}};
+}
+function saveProgress(p){
+  try{
+    localStorage.setItem(STORE_KEY, JSON.stringify(p));
+  }catch(e){
+    // Storage full (the 5 saved quizzes with diagrams, plus the per-level seen-question
+    // log, can add up) — fall back to saving everything except the heaviest detail, so
+    // medals/streaks/history/coupons are never lost even on a very constrained device.
+    try{
+      const light = Object.assign({}, p, {recentQuizzes:[], seenSigs:{1:[],2:[],3:[]}});
+      localStorage.setItem(STORE_KEY, JSON.stringify(light));
+    }catch(e2){}
+  }
+}
+let progress = loadProgress();
+function generateCouponCode(){
+  const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // no ambiguous-looking characters
+  let code=''; for(let i=0;i<5;i++) code+=chars[ri(0,chars.length-1)];
+  return 'XT-'+code;
+}
+
+function formatLogDate(ts){
+  return new Date(ts).toLocaleDateString('en-AU', {weekday:'short', day:'numeric', month:'short', year:'numeric'});
+}
+function formatLogClock(ts){
+  return new Date(ts).toLocaleTimeString('en-AU', {hour:'numeric', minute:'2-digit'});
+}
+function formatLogDuration(sec){
+  sec = Math.max(0, Math.round(sec));
+  const m = Math.floor(sec/60), s = sec%60;
+  return m>0 ? `${m}m ${s}s` : `${s}s`;
+}
+
+/* ============================================================
+   APP STATE + NAV
+   ============================================================ */
+let state = { test:[], idx:0, answers:[], score:0 };
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function renderHome(){
+  document.getElementById('homeMascot').innerHTML = mascotSVG('happy');
+  document.getElementById('statTests').textContent = progress.testsCompleted;
+  document.getElementById('statBest').textContent = progress.bestScore + '%';
+  document.getElementById('statStreak').textContent = progress.goldStreak;
+  const grid=document.getElementById('badgeGrid');
+  const tiers=[['bronze','🥉'],['silver','🥈'],['gold','🥇'],['diamond','💎'],['trophy','🏆']];
+  grid.innerHTML = tiers.map(([key,icon])=>{
+    const count = key==='trophy' ? (progress.badges.diamond>=3 ? 1: 0) : progress.badges[key];
+    const earned = count>0;
+    return `<div class="badge-slot ${earned?'earned':''}">${earned?icon:'❔'}${earned&&key!=='trophy'?`<span class="count">${count}</span>`:''}</div>`;
+  }).join('');
+
+  const lc = progress.levelCounts || {1:0,2:0,3:0};
+  const level2Unlocked = (lc[1]||0) >= 1;
+  const level3Unlocked = (lc[2]||0) >= 1;
+  document.querySelectorAll('#levelSelect .level-card').forEach(card=>{
+    const lvl = parseInt(card.getAttribute('data-level'),10);
+    const unlocked = lvl===1 || (lvl===2 && level2Unlocked) || (lvl===3 && level3Unlocked);
+    card.classList.toggle('locked', !unlocked);
+    const sub = card.querySelector('.level-sub');
+    const go = card.querySelector('.level-go');
+    if(lvl===1) sub.textContent = 'Warm-up numbers · always open';
+    if(lvl===2) sub.textContent = unlocked ? 'Bigger numbers, trickier steps' : 'Finish a Level 1 quest to unlock';
+    if(lvl===3) sub.textContent = unlocked ? '5 Gold+ in a row wins a coupon!' : 'Finish a Level 2 quest to unlock';
+    go.textContent = unlocked ? '▶' : '🔒';
+  });
+
+  const couponChip = document.getElementById('couponCountChip');
+  const couponCount = (progress.coupons||[]).length;
+  couponChip.textContent = couponCount>0 ? `(${couponCount})` : '';
+}
+
+function renderStats(){
+  const hist = progress.history || [];
+  document.getElementById('logTotalTests').textContent = progress.testsCompleted;
+  const avg = hist.length ? Math.round(hist.reduce((a,r)=>a+r.pct,0)/hist.length) : 0;
+  document.getElementById('logAvgPct').textContent = avg+'%';
+  document.getElementById('logBestPct').textContent = progress.bestScore+'%';
+  const totalSec = hist.reduce((a,r)=>a+(r.durationSec||0),0);
+  const totalMin = Math.round(totalSec/60);
+  document.getElementById('logTotalTime').textContent = totalMin>=60 ? `${Math.floor(totalMin/60)}h ${totalMin%60}m` : `${totalMin}m`;
+
+  const list=document.getElementById('historyList');
+  if(!hist.length){
+    list.innerHTML = '<p class="history-empty">No quests completed yet — start your first quest to see it show up here!</p>';
+    return;
+  }
+  const reviewableCount = Math.min(5, (progress.recentQuizzes||[]).length);
+  const medalIcons={bronze:'🥉',silver:'🥈',gold:'🥇',diamond:'💎',none:'🦘'};
+  const levelNames={1:'L1 Basic',2:'L2 Advanced',3:'L3 Extension'};
+  list.innerHTML = hist.map((r,i)=>{
+    const reviewable = i < reviewableCount;
+    const levelLabel = levelNames[r.level] || 'L1 Basic';
+    return `
+    <div class="history-item ${reviewable?'clickable':''}" ${reviewable?`data-idx="${i}"`:''}>
+      <div class="hi-left">
+        <span class="hi-date">${formatLogDate(r.ts)} &middot; <span style="color:var(--ochre-dark)">${levelLabel}</span></span>
+        <span class="hi-time">${formatLogClock(r.ts)} &middot; took ${formatLogDuration(r.durationSec)}</span>
+        ${reviewable ? '<span class="hi-hint">Tap to review answers ›</span>' : ''}
+      </div>
+      <div class="hi-right">
+        <span class="hi-score">${medalIcons[r.medal]||'🦘'} ${r.score}/${r.total} &middot; ${r.pct}%</span>
+      </div>
+    </div>`;
+  }).join('');
+  list.querySelectorAll('.history-item.clickable').forEach(el=>{
+    el.addEventListener('click', ()=> openRecentQuiz(parseInt(el.getAttribute('data-idx'),10)));
+  });
+}
+
+function renderCoupons(justEarned){
+  const coupons = progress.coupons || [];
+  const intro = document.getElementById('couponIntro');
+  const list = document.getElementById('couponList');
+
+  if(justEarned && coupons.length){
+    intro.innerHTML = `<span class="medal">🎉</span><h2>New Coupon Unlocked!</h2><p>5 Gold+ Extension quests in a row — amazing streak! Show the coupon below to a parent.</p>`;
+  } else {
+    intro.innerHTML = `<span class="medal">🎯</span><h2>Score 5 Gold+ in a row at Level 3</h2><p>Extension level, five quests in a row scoring 80% or higher, unlocks a Reward Coupon to show your parent!</p>`;
+  }
+
+  if(!coupons.length){
+    list.innerHTML = '<p class="history-empty">No coupons yet — keep practising Extension level to earn your first one!</p>';
+    return;
+  }
+  list.innerHTML = coupons.map((c,i)=>`
+    <div class="coupon-card">
+      <span class="coupon-icon">🎁</span>
+      <div style="font-weight:800; color:var(--night); font-size:14px;">Reward Coupon ${coupons.length-i}</div>
+      <div class="coupon-code">${c.code}</div>
+      <div class="coupon-date">Earned ${formatLogDate(c.ts)} &middot; ${c.streakAt}-quest Gold streak</div>
+      <div class="coupon-msg">🏆 Show this to your parent to redeem a special reward!</div>
+    </div>
+  `).join('');
+}
+
+on('btnInfo','click', ()=>{ const m=document.getElementById('infoModal'); if(m) m.classList.add('active'); });
+on('btnCloseInfo','click', ()=>{ const m=document.getElementById('infoModal'); if(m) m.classList.remove('active'); });
+on('btnStats','click', ()=>{ renderStats(); showScreen('screen-stats'); });
+on('btnStatsClose','click', ()=>{ showScreen('screen-home'); renderHome(); });
+on('btnCoupons','click', ()=>{ renderCoupons(false); showScreen('screen-coupons'); });
+on('btnCouponsClose','click', ()=>{ showScreen('screen-home'); renderHome(); });
+
+const levelSelectEl = document.getElementById('levelSelect');
+if(levelSelectEl){
+  levelSelectEl.addEventListener('click', (e)=>{
+    const card = e.target.closest('.level-card');
+    if(!card || card.classList.contains('locked')) return;
+    const lvl = parseInt(card.getAttribute('data-level'),10);
+    startQuiz(lvl);
+  });
+}
+
+function startQuiz(level){
+  const lvl = level || state.level || 1;
+  state.level = lvl;
+  state.test = buildTest(lvl);
+  state.idx = 0;
+  state.answers = new Array(state.test.length).fill(null);
+  state.startedAt = Date.now();
+  showScreen('screen-quiz');
+  renderQuestion();
+}
+
+function renderQuestion(){
+  const total = state.test.length;
+  const q = state.test[state.idx];
+  document.getElementById('quizCount').textContent = `L${state.level||1} · ${state.idx+1}/${total}`;
+  document.getElementById('strandChip').textContent = q.strand;
+  document.getElementById('qPrompt').innerHTML = q.prompt;
+  document.getElementById('qDiagram').innerHTML = q.diagram || '';
+  const pct = (state.idx)/total*100;
+  document.getElementById('quizFill').style.width = pct+'%';
+  document.getElementById('quizRoo').style.left = pct+'%';
+  const wrap=document.getElementById('qChoices');
+  wrap.innerHTML='';
+  q.choices.forEach((c,i)=>{
+    const b=document.createElement('div');
+    b.className='choice-btn';
+    b.innerHTML=c;
+    b.addEventListener('click',()=>selectChoice(i));
+    wrap.appendChild(b);
+  });
+  const prevAns = state.answers[state.idx];
+  document.getElementById('btnNext').disabled = prevAns===null || prevAns===undefined;
+  if(prevAns!==null && prevAns!==undefined){
+    wrap.children[prevAns].classList.add('selected');
+  }
+  document.getElementById('btnNext').textContent = (state.idx===total-1) ? 'Finish 🏁' : 'Next ➜';
+}
+function selectChoice(i){
+  state.answers[state.idx]=i;
+  document.querySelectorAll('#qChoices .choice-btn').forEach((el,idx)=>{
+    el.classList.toggle('selected', idx===i);
+  });
+  document.getElementById('btnNext').disabled=false;
+  beep(440,.06);
+}
+on('btnNext','click', ()=>{
+  if(state.idx < state.test.length-1){
+    state.idx++;
+    renderQuestion();
+  } else {
+    finishQuiz();
+  }
+});
+on('btnQuit','click', ()=>{
+  if(confirm('Quit this quest? Your progress on this quest will be lost.')){
+    showScreen('screen-home'); renderHome();
+  }
+});
+
+function finishQuiz(){
+  const level = state.level || 1;
+  let score=0;
+  state.test.forEach((q,i)=>{ if(state.answers[i]===q.correctIndex) score++; });
+  state.score=score;
+  const total=state.test.length;
+  const pct=Math.round(score/total*100);
+
+  progress.testsCompleted++;
+  if(pct>progress.bestScore) progress.bestScore=pct;
+
+  progress.levelCounts = progress.levelCounts || {1:0,2:0,3:0};
+  progress.levelCounts[level] = (progress.levelCounts[level]||0) + 1;
+
+  let tier, medal, title, msg;
+  if(pct<40){ tier=null; medal='🦘'; title='Keep Hopping!'; msg="Every explorer starts somewhere — let's try another quest!"; }
+  else if(pct<60){ tier='bronze'; medal='🥉'; title='Bronze Boomerang'; msg='Solid throw! You brought it back with a Bronze medal.'; }
+  else if(pct<80){ tier='silver'; medal='🥈'; title='Silver Wattle'; msg="Beautiful work — that's a Silver medal for you!"; }
+  else if(pct<95){ tier='gold'; medal='🥇'; title='Gold Kookaburra'; msg='Amazing! You laughed all the way to a Gold medal!'; }
+  else { tier='diamond'; medal='💎'; title='Diamond Dingo'; msg="Incredible! Almost perfect — you're an Outback Legend!"; }
+
+  if(tier){ progress.badges[tier] = (progress.badges[tier]||0)+1; }
+  if(pct>=80){ progress.goldStreak++; } else { progress.goldStreak=0; }
+
+  // Level 3 (Extension) gold-streak coupon: 5 Gold+ results in a row unlocks a coupon,
+  // and it keeps unlocking a fresh one every 5-streak milestone (5, 10, 15...) so it
+  // stays motivating long after the first one.
+  let newCoupon = null;
+  if(level===3){
+    if(pct>=80){ progress.level3GoldStreak = (progress.level3GoldStreak||0) + 1; }
+    else { progress.level3GoldStreak = 0; }
+    if(progress.level3GoldStreak>0 && progress.level3GoldStreak % 5 === 0){
+      newCoupon = { code: generateCouponCode(), ts: Date.now(), streakAt: progress.level3GoldStreak };
+      progress.coupons = progress.coupons || [];
+      progress.coupons.unshift(newCoupon);
+    }
+  }
+
+  const finishedAt = Date.now();
+  const durationSec = Math.max(1, Math.round((finishedAt - (state.startedAt||finishedAt))/1000));
+  progress.history = progress.history || [];
+  progress.history.unshift({ ts: finishedAt, score, total, pct, durationSec, medal: tier || 'none', title, level });
+  if(progress.history.length > 300) progress.history.length = 300; // keep the log from growing forever
+
+  // Keep full question-by-question detail (including the user's picks) for the
+  // 5 most recent quizzes only, so "review a past quiz" stays possible without
+  // storing every diagram from every quiz ever taken.
+  progress.recentQuizzes = progress.recentQuizzes || [];
+  progress.recentQuizzes.unshift({
+    ts: finishedAt, score, total, pct, durationSec, medal: tier || 'none', title, level,
+    questions: state.test.map((q,i)=>({
+      strand:q.strand, prompt:q.prompt, diagram:q.diagram, choices:q.choices,
+      correctIndex:q.correctIndex, explain:q.explain, userAnswer: state.answers[i]
+    }))
+  });
+  if(progress.recentQuizzes.length > 5) progress.recentQuizzes.length = 5;
+
+  saveProgress(progress);
+
+  const levelNames={1:'Basic',2:'Advanced',3:'Extension'};
+  document.getElementById('resultsTitle').textContent = `Level ${level} Quest Complete!`;
+  document.getElementById('scoreFrac').textContent = `${score}/${total}`;
+  document.getElementById('scorePct').firstChild.textContent = pct+'%';
+  document.getElementById('medalIcon').textContent = medal;
+  document.getElementById('medalTitle').textContent = title;
+  document.getElementById('medalMsg').textContent = msg;
+
+  const btnRetryEl = document.getElementById('btnRetry');
+  if(btnRetryEl) btnRetryEl.textContent = `🔁 Play Level ${level} Again`;
+
+  const btnNewCoupon = document.getElementById('btnNewCoupon');
+  if(btnNewCoupon){
+    if(newCoupon){ btnNewCoupon.style.display='flex'; }
+    else { btnNewCoupon.style.display='none'; }
+  }
+  state.lastCoupon = newCoupon;
+
+  const circumference = 2*Math.PI*52;
+  const ring=document.getElementById('ringProgress');
+  ring.setAttribute('stroke-dasharray', circumference);
+  ring.style.strokeDashoffset = circumference;
+
+  const stars = pct<40?1: pct<60?2: pct<80?3: pct<95?4:5;
+  document.querySelectorAll('.stars-row .star').forEach((s,i)=>s.classList.remove('lit'));
+
+  showScreen('screen-results');
+  requestAnimationFrame(()=>{
+    setTimeout(()=>{ ring.style.transition='stroke-dashoffset 1.1s ease'; ring.style.strokeDashoffset = circumference - (pct/100)*circumference; },80);
+    for(let i=0;i<stars;i++){ setTimeout(()=>{ document.querySelectorAll('.stars-row .star')[i].classList.add('lit'); }, 350+i*160); }
+  });
+
+  if(pct>=60){ setTimeout(sndFanfare, 300); } else { setTimeout(()=>beep(300,.3),300); }
+  if(pct>=80){ launchConfetti(); }
+  if(newCoupon){ setTimeout(()=>{ sndFanfare(); launchConfetti(); }, 900); } // extra celebration burst for the coupon
+}
+
+on('btnRetry','click', ()=> startQuiz(state.level||1));
+on('btnHome','click', ()=>{ showScreen('screen-home'); renderHome(); });
+on('btnNewCoupon','click', ()=>{ renderCoupons(true); showScreen('screen-coupons'); });
+
+/* ---------- review ---------- */
+let reviewIdx=0;
+let reviewSource=[];          // array of {strand,prompt,diagram,choices,correctIndex,explain,userAnswer}
+let reviewReturnScreen='screen-results';
+
+on('btnReview','click', ()=>{
+  reviewSource = state.test.map((q,i)=>({...q, userAnswer: state.answers[i]}));
+  reviewReturnScreen = 'screen-results';
+  reviewIdx = 0;
+  showScreen('screen-review');
+  renderReview();
+});
+on('btnBackResults','click', ()=>{
+  showScreen(reviewReturnScreen);
+  if(reviewReturnScreen==='screen-stats') renderStats();
+});
+on('btnReviewHome','click', ()=>{ showScreen('screen-home'); renderHome(); });
+on('btnPrevQ','click', ()=>{ if(reviewIdx>0){ reviewIdx--; renderReview(); } });
+on('btnNextQ','click', ()=>{ if(reviewIdx<reviewSource.length-1){ reviewIdx++; renderReview(); } });
+
+function openRecentQuiz(idx){
+  const quiz = (progress.recentQuizzes||[])[idx];
+  if(!quiz || !quiz.questions || !quiz.questions.length) return;
+  reviewSource = quiz.questions;
+  reviewReturnScreen = 'screen-stats';
+  reviewIdx = 0;
+  showScreen('screen-review');
+  renderReview();
+}
+
+function renderReview(){
+  const total=reviewSource.length;
+  const q=reviewSource[reviewIdx];
+  const userAns=q.userAnswer;
+  const isCorrect = userAns===q.correctIndex;
+  document.getElementById('btnBackResults').textContent = reviewReturnScreen==='screen-results' ? 'Results' : 'Quest log';
+  document.getElementById('reviewCount').textContent=`${reviewIdx+1}/${total}`;
+  document.getElementById('rvPrompt').innerHTML=q.prompt;
+  document.getElementById('rvDiagram').innerHTML=q.diagram||'';
+  const flag=document.getElementById('reviewFlag');
+  flag.textContent = isCorrect? '✅ Correct' : '❌ Not quite';
+  flag.className = 'review-result-flag ' + (isCorrect?'correct':'wrong');
+  const wrap=document.getElementById('rvChoices');
+  wrap.innerHTML='';
+  q.choices.forEach((c,i)=>{
+    const d=document.createElement('div');
+    d.className='rc';
+    let tag='';
+    if(i===q.correctIndex){ d.classList.add('correct-ans'); tag='✅'; }
+    if(i===userAns && userAns!==q.correctIndex){ d.classList.add('user-wrong'); tag='❌'; }
+    d.innerHTML = `${c}${tag?`<span class="tag">${tag}</span>`:''}`;
+    wrap.appendChild(d);
+  });
+  document.getElementById('rvExplain').innerHTML = `<b>Why:</b> ${q.explain}`;
+  document.getElementById('btnPrevQ').style.visibility = reviewIdx===0?'hidden':'visible';
+  document.getElementById('btnNextQ').style.visibility = reviewIdx===total-1?'hidden':'visible';
+}
+
+/* ---------- confetti ---------- */
+function launchConfetti(){
+  const colors=['#FFC53D','#B5541B','#2F9E64','#3E8FB0','#D93B3B'];
+  for(let i=0;i<60;i++){
+    setTimeout(()=>{
+      const el=document.createElement('div');
+      el.className='confetti-piece';
+      el.style.left=Math.random()*100+'vw';
+      el.style.background=colors[ri(0,colors.length-1)];
+      el.style.transform=`rotate(${ri(0,360)}deg)`;
+      document.body.appendChild(el);
+      const duration=2200+Math.random()*1400;
+      el.animate([
+        {transform:`translateY(0) rotate(0deg)`, opacity:1},
+        {transform:`translateY(${window.innerHeight+40}px) rotate(${ri(200,720)}deg)`, opacity:.9}
+      ],{duration, easing:'cubic-bezier(.25,.46,.45,.94)'});
+      setTimeout(()=>el.remove(), duration);
+    }, i*18);
+  }
+}
+
+/* ---------- init ---------- */
+renderHome();
+
+}
+
+function startApp(){
+  try{
+    boot();
+  }catch(err){
+    console.error('Numeracy Quest failed to start:', err);
+    const app = document.getElementById('app');
+    if(app){
+      app.innerHTML =
+        '<div style="padding:40px 24px; color:#F6EAD0; text-align:center; font-family:sans-serif;">'
+        + '<div style="font-size:40px; margin-bottom:12px;">🦘💤</div>'
+        + '<h2 style="font-family:inherit; margin-bottom:10px;">Something didn\'t load right</h2>'
+        + '<p style="font-size:14px; line-height:1.5; opacity:.85;">Try closing this and reopening it in <b>Safari</b> instead of Chrome — '
+        + 'on iPad, Safari handles files saved from AirDrop more reliably.</p>'
+        + '<p style="font-size:12px; opacity:.6; margin-top:16px;">Details: ' + (err && err.message ? err.message : String(err)) + '</p>'
+        + '</div>';
+    }
+  }
+}
+
+if(document.readyState === 'loading'){
+  document.addEventListener('DOMContentLoaded', startApp);
+} else {
+  startApp();
+}
+</script>
+</body>
+</html>
